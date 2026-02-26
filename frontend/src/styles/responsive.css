@@ -1,0 +1,15 @@
+:root{
+  /* fluid type scale (phone → 4K) */
+  --step--1: clamp(0.80rem, 0.72rem + 0.25vw, 0.95rem);
+  --step-0:  clamp(0.95rem, 0.88rem + 0.35vw, 1.10rem);
+  --step-1:  clamp(1.10rem, 1.00rem + 0.50vw, 1.25rem);
+  --step-2:  clamp(1.30rem, 1.15rem + 0.75vw, 1.60rem);
+  --step-3:  clamp(1.60rem, 1.35rem + 1.20vw, 2.00rem);
+}
+
+html { font-size: 100%; }
+body { font-size: var(--step-0); line-height: 1.5; }
+
+img, video, canvas, iframe { max-width: 100%; height: auto; display: block; }
+
+.container { width: min(100% - 2rem, 1200px); margin-inline: auto; }

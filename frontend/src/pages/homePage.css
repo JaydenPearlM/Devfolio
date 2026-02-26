@@ -1,0 +1,74 @@
+/* src/pages/homePage.css */
+
+/* 1) Import Inter */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+/* 2) Pastel palette variables */
+:root {
+  --pastel-green: #D1FAE5;
+  --pastel-teal:  #AFECEF;
+  --pastel-blue:  #DBEAFE;
+  --text-dark:    #1F2937;
+
+  /* smoke tuning (desktop default) */
+  --smoke-opacity: 0.20;
+}
+
+/* 3) Global font & base bg
+   👉 No width / max-width hacks here
+*/
+.homePage,
+.home-smoke {
+  font-family: 'Inter', "sans-serif";
+  min-height: 100vh;
+  background-color: transparent;
+  position: relative;
+  overflow: hidden;      /* vertical scroll is on window, not this div */
+  isolation: isolate;    /* stacking context for ::before */
+}
+
+/* ✅ Full-screen smoke layer under content */
+.homePage::before,
+.home-smoke::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+
+  background-image: var(--smoke-image, none);
+  background-repeat: no-repeat;
+  background-size: 200% 140%;
+  background-position: 5% center;
+
+  opacity: var(--smoke-opacity);
+  pointer-events: none;
+  transform: translateZ(0);
+  filter: blur(4px);
+}
+
+/* Keep page content above the smoke layer */
+.homePage > *,
+.home-smoke > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ───────────────────────────────────────────────
+   Mobile performance tweaks: ONLY touch the smoke
+   ─────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .homePage::before,
+  .home-smoke::before {
+    opacity: var(--smoke-opacity, 0.15);
+    filter: blur(0.5px);
+    background-attachment: scroll;
+    background-position: center top;
+  }
+}
+
+@media (max-width: 768px) {
+  .homePage::before,
+  .home-smoke::before {
+    background-attachment: scroll;
+  }
+}

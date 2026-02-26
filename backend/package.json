@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "devfolio-root": "file:.."
+  }
+}

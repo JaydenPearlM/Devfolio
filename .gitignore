@@ -1,0 +1,30 @@
+# dependencies
+node_modules/
+
+# builds
+dist/
+build/
+
+# environment
+.env
+.env.*
+!.env.example
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# uploads (important for your server)
+devfolioserveruploads/
+
+# misc
+*.local

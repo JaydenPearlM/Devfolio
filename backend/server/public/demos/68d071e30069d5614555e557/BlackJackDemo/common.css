@@ -1,0 +1,46 @@
+header, footer {
+  position: fixed;
+  width: 100%;
+  background-color: #1b1b1b;
+  color: #f1faee;
+  text-align: center;
+  z-index: 1000;
+}
+
+header {
+  top: 0;
+}
+
+footer {
+  bottom:0;
+}
+
+nav {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+main {
+  margin-top: 80px;
+  margin-bottom: 60pxpadding: 1rem;
+}
+
+.disapearing {
+  display: block;
+}
+
+.mobileFeature {
+  display: none;
+}
+
+@media (max-width: 800) {
+  .disapearing {
+    display: none;
+  }
+
+  .mobileFeature {
+    display: block;
+  }
+}
