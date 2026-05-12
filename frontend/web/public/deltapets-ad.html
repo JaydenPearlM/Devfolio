@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DeltaPets</title>
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Inter:wght@300;400;500;600;800&display=swap");
+
+    :root {
+      --blue-900: #05133a;
+      --blue-800: #0b1f55;
+      --blue-700: #1f4e87;
+      --blue-500: #4a86c8;
+      --blue-300: #74c9ea;
+      --accent: #8b5cf6;
+      --accent-rgb: 139, 92, 246;
+      --ink: rgba(255, 255, 255, 0.94);
+      --muted: rgba(255, 255, 255, 0.72);
+      --soft: rgba(255, 255, 255, 0.56);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      min-height: 100%;
+      margin: 0;
+    }
+
+    body {
+      font-family: "Inter", system-ui, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 16% 12%, rgba(var(--accent-rgb), 0.2), transparent 34%),
+        radial-gradient(circle at 84% 18%, rgba(116, 201, 234, 0.18), transparent 36%),
+        linear-gradient(180deg, #061944 0%, var(--blue-900) 100%);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image: url("/blue-abstract-background-with-network-grid-particles-connected-generative-ai-aig21_31965-151343.avif");
+      background-size: cover;
+      background-position: center;
+      opacity: 0.35;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .page {
+      min-height: 100vh;
+      width: min(100% - 32px, 1120px);
+      margin: 0 auto;
+      padding: 56px 0;
+      display: grid;
+      place-items: center;
+    }
+
+    .hero {
+      width: 100%;
+      border: 1px solid rgba(116, 201, 234, 0.48);
+      border-radius: 28px;
+      padding: clamp(28px, 5vw, 56px);
+      background: linear-gradient(135deg, rgba(5, 19, 58, 0.94), rgba(11, 31, 85, 0.9));
+      box-shadow:
+        0 0 0 1px rgba(var(--accent-rgb), 0.24),
+        0 24px 70px rgba(0, 0, 0, 0.38);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 20px;
+      pointer-events: none;
+    }
+
+    .eyebrow {
+      margin: 0 0 12px;
+      color: var(--blue-300);
+      font-size: 0.78rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+    }
+
+    h1 {
+      margin: 0;
+      font-family: "Oswald", system-ui, sans-serif;
+      font-size: clamp(4rem, 13vw, 9rem);
+      line-height: 0.92;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+    }
+
+    .subtitle {
+      max-width: 780px;
+      margin: 22px 0 0;
+      color: var(--muted);
+      font-size: clamp(1rem, 2vw, 1.25rem);
+      line-height: 1.75;
+    }
+
+    .featureGrid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 30px;
+    }
+
+    .feature {
+      min-height: 130px;
+      padding: 18px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+    }
+
+    .feature h2 {
+      margin: 0 0 8px;
+      font-family: "Oswald", system-ui, sans-serif;
+      font-size: 1.35rem;
+      line-height: 1.1;
+    }
+
+    .feature p {
+      margin: 0;
+      color: var(--soft);
+      font-size: 0.95rem;
+      line-height: 1.55;
+    }
+
+    .actions {
+      margin-top: 32px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 0 20px;
+      border-radius: 999px;
+      background: var(--accent);
+      color: #ffffff;
+      text-decoration: none;
+      font-weight: 800;
+      border: 1px solid rgba(255, 255, 255, 0.32);
+      box-shadow: 0 0 18px rgba(var(--accent-rgb), 0.32);
+    }
+
+    .note {
+      color: var(--soft);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 780px) {
+      .page {
+        width: min(100% - 20px, 1120px);
+        padding: 24px 0;
+      }
+
+      .featureGrid {
+        grid-template-columns: 1fr;
+      }
+
+      .button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="hero" aria-labelledby="deltaPetsTitle">
+      <p class="eyebrow">Browser Game Project</p>
+      <h1 id="deltaPetsTitle">DeltaPets</h1>
+      <p class="subtitle">
+        Hatch a Kith, care for it daily, build a party, and battle through a browser-native pet sim built with React, TypeScript, Node, Express, and Supabase.
+      </p>
+
+      <div class="featureGrid" aria-label="DeltaPets feature highlights">
+        <article class="feature">
+          <h2>Hatch</h2>
+          <p>Every Kith can roll its own element, personality, and early stat path.</p>
+        </article>
+        <article class="feature">
+          <h2>Care</h2>
+          <p>Daily care keeps your Kith stable through hunger, cleanliness, mood, rest, and comfort systems.</p>
+        </article>
+        <article class="feature">
+          <h2>Battle</h2>
+          <p>Train your team, unlock skills, and push toward dungeon-style battle runs.</p>
+        </article>
+      </div>
+
+      <div class="actions">
+        <a class="button" href="/" aria-label="Return to Jayden's portfolio homepage">Back to Portfolio</a>
+        <span class="note">Closed Alpha target: June 2026</span>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

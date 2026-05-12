@@ -5,7 +5,7 @@ node_modules/
 dist/
 build/
 
-# environment
+# env
 .env
 .env.*
 !.env.example
@@ -23,8 +23,8 @@ Thumbs.db
 .vscode/
 .idea/
 
-# uploads (important for your server)
-devfolioserveruploads/
+# Vite cache
+.vite/
 
-# misc
-*.local
+# server uploads (don’t commit user content)
+devfolioserveruploads/

@@ -1,45 +1,73 @@
-// backend/server/index.js
-require("dotenv").config();
+import "dotenv/config";
+import express from "express";
+import path from "path";
+import { fileURLToPath } from "url";
 
-const express = require("express");
-const path = require("path");
-
-// NOTE: You said "NO CORS" — so we won't enable permissive CORS here.
-// Use Vite dev proxy for local dev instead (recommended).
-
-const adminAuthRoutes = require("./routes/adminAuth");
-const projectRoutes = require("./routes/project");
-const analyticsRoutes = require("./routes/analytics");
-const dogRoutes = require("./routes/dogRoutes");
-const kofiRoutes = require("./routes/kofiRoutes");
+import analyticsRoutes from "./routes/analytics.js";
+import dogRoutes from "./routes/dogRoutes.js";
+import kofiRoutes from "./routes/kofiRoutes.js";
+import projectRoutes from "./routes/projects.js";
 
 const app = express();
-const PORT = Number(process.env.PORT || 5000);
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Absolute path to the built React app
+// From backend/server/ we go up two levels to reach frontend/web/dist
+const DIST_DIR = path.resolve(__dirname, "../../frontend/web/dist");
+
+/* ===============================
+   CORE MIDDLEWARE
+=============================== */
 
 app.use(express.json({ limit: "10mb" }));
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
-// Static file serving
+/* ===============================
+   STATIC FILES
+=============================== */
+
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-app.use("/demos", express.static(path.join(__dirname, "public", "demos")));
+app.use("/public", express.static(path.join(__dirname, "public")));
 
-// API routes
-app.use("/api/admin", adminAuthRoutes);
-app.use("/api/projects", projectRoutes);
+// Serve the built React app's static assets (JS, CSS, images, etc.)
+app.use(express.static(DIST_DIR));
+
+/* ===============================
+   API ROUTES
+=============================== */
+
 app.use("/api/analytics", analyticsRoutes);
 app.use("/api/dog", dogRoutes);
 app.use("/api/kofi", kofiRoutes);
+app.use("/api/projects", projectRoutes);
 
-// Health
+/* ===============================
+   HEALTH CHECK
+=============================== */
+
 app.get("/api/health", (_req, res) => {
-  res.json({ ok: true, time: new Date().toISOString() });
+  res.json({ ok: true, service: "backend" });
 });
 
-// Root
-app.get("/", (_req, res) => {
-  res.status(200).send("Devfolio backend running. Try /api/health");
+/* ===============================
+   SPA FALLBACK
+   Must be last. Any route that did not match an API
+   route or a static file gets the React index.html.
+   React Router takes it from there.
+=============================== */
+
+app.get("*", (_req, res) => {
+  res.sendFile(path.join(DIST_DIR, "index.html"));
 });
+
+/* ===============================
+   SERVER START
+=============================== */
+
+const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-  console.log(`[server] listening on http://localhost:${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });

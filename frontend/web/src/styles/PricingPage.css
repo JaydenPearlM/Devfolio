@@ -1,0 +1,526 @@
+/* ==============================
+   Pricing Page Layout
+================================ */
+
+.pricingPage {
+  width: 100%;
+  min-height: 100%;
+  padding: 28px 28px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  box-sizing: border-box;
+}
+
+.pricingHeader {
+  text-align: center;
+  margin-bottom: 0;
+}
+
+.pricingTitle {
+  font-size: 42px;
+  font-weight: 800;
+  color: #1e293b;
+}
+
+.pricingSubtitle {
+  margin-top: 10px;
+  font-size: 16px;
+  color: #475569;
+}
+
+/* ==============================
+   Services Section
+================================ */
+
+.servicesSection {
+  margin-top: 0;
+  padding: 26px 24px 24px;
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.servicesTitle {
+  margin: 0 0 12px;
+  font-size: clamp(1.8rem, 2vw, 2.35rem);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  color: rgba(24, 34, 58, 0.95);
+}
+
+.servicesIntro {
+  margin: 0 0 22px;
+  max-width: 980px;
+  font-size: 1rem;
+  line-height: 1.7;
+  color: rgba(33, 44, 72, 0.72);
+}
+
+.servicesGrid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.serviceCard {
+  min-height: 155px;
+  padding: 18px 16px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 8px 18px rgba(0, 0, 0, 0.08);
+  transition:
+    transform 0.22s ease,
+    box-shadow 0.22s ease,
+    border-color 0.22s ease;
+}
+
+.serviceCard:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    0 16px 28px rgba(0, 0, 0, 0.14);
+  border-color: rgba(255, 255, 255, 0.28);
+}
+
+.serviceCard h3 {
+  margin: 0 0 10px;
+  font-size: 1rem;
+  font-weight: 800;
+  line-height: 1.25;
+  color: rgba(24, 34, 58, 0.95);
+}
+
+.serviceCard p {
+  margin: 0;
+  font-size: 0.93rem;
+  line-height: 1.6;
+  color: rgba(33, 44, 72, 0.74);
+}
+
+/* ==============================
+   Pricing + Waitlist Section
+================================ */
+
+.pricingSection {
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr);
+  gap: 22px;
+  align-items: start;
+}
+
+/* ==============================
+   Waitlist Card
+================================ */
+
+.waitlistCard {
+  position: sticky;
+  top: 24px;
+  padding: 22px 18px 20px;
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow:
+    0 12px 30px rgba(0, 0, 0, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.waitlistBadge {
+  position: relative;
+  z-index: 1;
+  display: block;
+  margin: 0 0 14px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  border-radius: 0;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(24, 34, 58, 0.72);
+}
+
+.waitlistTitle {
+  margin: 0 0 12px;
+  font-size: 1.7rem;
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  font-weight: 800;
+  color: rgba(22, 32, 54, 0.95);
+}
+
+.waitlistText {
+  margin: 0 0 16px;
+  font-size: 0.96rem;
+  line-height: 1.65;
+  color: rgba(34, 45, 74, 0.78);
+}
+
+.depositBox {
+  margin-bottom: 16px;
+  padding: 14px 14px 12px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.depositTitle {
+  margin-bottom: 8px;
+  font-size: 0.88rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  color: rgba(24, 34, 58, 0.92);
+}
+
+.depositText {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: rgba(34, 45, 74, 0.8);
+}
+
+.waitlistList {
+  list-style: none;
+  margin: 0 0 18px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.waitlistList li {
+  position: relative;
+  padding-left: 18px;
+  font-size: 0.93rem;
+  line-height: 1.45;
+  color: rgba(24, 34, 58, 0.82);
+}
+
+.waitlistList li::before {
+  content: "";
+  position: absolute;
+  top: 0.58em;
+  left: 0;
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: rgba(44, 73, 150, 0.78);
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.08);
+}
+
+.waitlistCTA {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 999px;
+  text-decoration: none;
+  background: rgba(255, 255, 255, 0.88);
+  color: rgba(25, 35, 60, 0.92);
+  font-weight: 800;
+  font-size: 0.92rem;
+  line-height: 1;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow:
+    0 8px 18px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.65);
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    background 0.18s ease;
+}
+
+.waitlistCTA:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 12px 20px rgba(0, 0, 0, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.96);
+}
+
+/* ==============================
+   Pricing Cards Grid
+================================ */
+
+.pricingGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(220px, 1fr));
+  gap: 20px;
+  align-items: stretch;
+}
+
+/* ==============================
+   Pricing Card
+================================ */
+
+.pricingCard {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  padding: 24px 20px 20px;
+  border-radius: 24px;
+  color: rgba(24, 34, 58, 0.92);
+  overflow: hidden;
+  background: linear-gradient(
+    135deg,
+    #5bcefa 0%,
+    #f5a9b8 30%,
+    #ffffff 50%,
+    #f5a9b8 70%,
+    #5bcefa 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow:
+    0 12px 30px rgba(0, 0, 0, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  transition:
+    transform 0.24s ease,
+    box-shadow 0.24s ease,
+    border-color 0.24s ease;
+}
+
+.pricingCard::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.08),
+    rgba(255, 255, 255, 0.02) 34%,
+    rgba(255, 255, 255, 0.01)
+  );
+}
+
+.pricingCard:hover {
+  transform: translateY(-8px);
+  box-shadow:
+    0 22px 42px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.28);
+}
+
+.pricingFeatured {
+  transform: translateY(-6px) scale(1.015);
+  border: 1px solid rgba(79, 140, 255, 0.55);
+  box-shadow:
+    0 18px 40px rgba(0, 0, 0, 0.2),
+    0 0 0 1px rgba(79, 140, 255, 0.12),
+    0 0 22px rgba(79, 140, 255, 0.18);
+}
+
+.pricingFeatured:hover {
+  transform: translateY(-12px) scale(1.025);
+}
+
+.pricingFeatured::after {
+  content: "MOST POPULAR";
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: rgba(32, 54, 106, 0.92);
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+}
+
+/* ==============================
+   Card Content
+================================ */
+
+.planName {
+  position: relative;
+  z-index: 1;
+  margin: 0 0 10px;
+  font-size: 1.75rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: rgba(22, 32, 54, 0.95);
+}
+
+.planPrice {
+  position: relative;
+  z-index: 1;
+  margin-bottom: 14px;
+  font-size: clamp(2rem, 3vw, 3rem);
+  font-weight: 900;
+  line-height: 0.98;
+  letter-spacing: -0.05em;
+  color: rgba(20, 30, 52, 0.96);
+  text-wrap: balance;
+}
+
+.planDescription {
+  position: relative;
+  z-index: 1;
+  margin-bottom: 18px;
+  min-height: 68px;
+  font-size: 0.97rem;
+  line-height: 1.6;
+  color: rgba(34, 45, 74, 0.74);
+}
+
+.planList {
+  position: relative;
+  z-index: 1;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+}
+
+.planList li {
+  position: relative;
+  padding-left: 18px;
+  margin-bottom: 0;
+  font-size: 0.95rem;
+  line-height: 1.45;
+  color: rgba(24, 34, 58, 0.82);
+}
+
+.planList li::before {
+  content: "";
+  position: absolute;
+  top: 0.58em;
+  left: 0;
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: rgba(44, 73, 150, 0.78);
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.08);
+}
+
+/* ==============================
+   CTA Button
+================================ */
+
+.planCTA {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  margin-top: 22px;
+  padding: 12px 18px;
+  border-radius: 999px;
+  text-decoration: none;
+  background: rgba(255, 255, 255, 0.88);
+  color: rgba(25, 35, 60, 0.92);
+  font-weight: 800;
+  font-size: 0.92rem;
+  line-height: 1;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow:
+    0 8px 18px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.65);
+  cursor: pointer;
+  user-select: none;
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    background 0.18s ease;
+}
+
+.planCTA:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 12px 20px rgba(0, 0, 0, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.96);
+}
+
+.planCTA:active {
+  transform: translateY(0);
+}
+
+/* ==============================
+   Responsive
+================================ */
+
+@media (max-width: 1440px) {
+  .servicesGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .pricingSection {
+    grid-template-columns: 1fr;
+  }
+
+  .waitlistCard {
+    position: relative;
+    top: 0;
+  }
+
+  .pricingGrid {
+    grid-template-columns: repeat(2, minmax(260px, 1fr));
+  }
+}
+
+@media (max-width: 980px) {
+  .pricingPage {
+    padding: 20px 18px 34px;
+    gap: 22px;
+  }
+
+  .servicesSection {
+    padding: 20px 18px;
+    border-radius: 20px;
+  }
+
+  .servicesGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .pricingGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .pricingFeatured,
+  .pricingFeatured:hover {
+    transform: none;
+  }
+
+  .planDescription {
+    min-height: auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .pricingTitle {
+    font-size: 32px;
+  }
+
+  .planPrice {
+    font-size: 28px;
+  }
+
+  .servicesTitle {
+    font-size: 24px;
+  }
+
+  .servicesIntro {
+    font-size: 14px;
+  }
+
+  .waitlistTitle {
+    font-size: 1.4rem;
+  }
+}

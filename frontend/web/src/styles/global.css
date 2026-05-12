@@ -1,0 +1,739 @@
+/* =============================================================================
+   GLOBAL.CSS — Devfolio
+   -----------------------------------------------------------------------------
+   Rules:
+   - NO background images (ever) for the page background.
+   - Sidebar / About / Project Cards keep their trans gradients (do not override).
+   - Site background = DARK denim / navy so white text reads clean.
+   - Accent color = soft purple (used for rings / glows).
+   - Top banner + Footer use BLUE palette.
+============================================================================= */
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap");
+@import "tailwindcss";
+@import "./responsive.css";
+
+/* ---------- Theme tokens ---------- */
+:root {
+  /* ---------- BLUE palette ---------- */
+  --blue-900: #05133a;
+  --blue-800: #0b1f55;
+  --blue-700: #1f4e87;
+  --blue-500: #4a86c8;
+  --blue-300: #74c9ea;
+
+  /* Background target: DARK denim / navy */
+  --bg-page: var(--blue-900);
+  --bg-page-2: #061944;
+
+  /* Accent (soft purple) */
+  --accent: #8b5cf6;
+  --accent-rgb: 139, 92, 246;
+
+  /* App text (white for dark view) */
+  --ink: rgba(255, 255, 255, 0.92);
+  --muted: rgba(255, 255, 255, 0.72);
+  --soft: rgba(255, 255, 255, 0.55);
+
+  /* Optional "paper" for light cards */
+  --paper: rgba(255, 255, 255, 0.1);
+
+  /* UI text colors for glass / light panels */
+  --ui-text-primary: rgba(10, 30, 60, 0.92);
+  --ui-text-secondary: rgba(10, 30, 60, 0.7);
+  --ui-text-muted: rgba(10, 30, 60, 0.65);
+
+  /* Trans UI palette */
+  --ui-trans-a: #e9d5ff;
+  --ui-trans-b: #93c5fd;
+  --ui-trans-c: #fbcfe8;
+  --ui-trans-ring: rgba(147, 197, 253, 0.55);
+  --ui-trans-border: rgba(255, 255, 255, 0.68);
+  --ui-trans-ink: rgba(10, 30, 60, 0.92);
+
+  /* ---------- Reusable Devfolio panel system ---------- */
+  --dv-panel-dark-start: rgba(5, 19, 58, 0.92);
+  --dv-panel-dark-end: rgba(11, 31, 85, 0.9);
+  --dv-panel-dark-bg: linear-gradient(
+    135deg,
+    var(--dv-panel-dark-start),
+    var(--dv-panel-dark-end)
+  );
+
+  --dv-panel-trans-bg: linear-gradient(
+    135deg,
+    var(--ui-trans-a),
+    var(--ui-trans-b),
+    var(--ui-trans-c)
+  );
+
+  --dv-border-soft: rgba(255, 255, 255, 0.35);
+  --dv-border-trans: var(--ui-trans-border);
+  --dv-border-cyan: rgba(116, 201, 234, 0.48);
+  --dv-border-purple: rgba(139, 92, 246, 0.9);
+
+  --dv-glow-purple-soft: 0 0 18px rgba(var(--accent-rgb), 0.32);
+  --dv-glow-purple-mid: 0 0 24px rgba(var(--accent-rgb), 0.46);
+  --dv-glow-cyan-soft: 0 0 22px rgba(116, 201, 234, 0.28);
+  --dv-glow-cyan-mid: 0 0 34px rgba(116, 201, 234, 0.42);
+
+  --dv-shadow-panel: 0 14px 28px rgba(0, 0, 0, 0.28);
+  --dv-shadow-panel-strong: 0 16px 34px rgba(0, 0, 0, 0.28);
+
+  --dv-inset-border: rgba(255, 255, 255, 0.35);
+  --dv-inset-glow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+
+  --dv-title-dark: rgba(0, 0, 0, 0.92);
+  --dv-subtitle-dark: rgba(0, 0, 0, 0.78);
+  --dv-text-dark: rgba(0, 0, 0, 0.86);
+  --dv-text-dark-muted: rgba(0, 0, 0, 0.64);
+}
+
+/* ---------- Base reset ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  overflow-x: hidden;
+  color: inherit;
+  font-family:
+    "Inter",
+    system-ui,
+    -apple-system,
+    Segoe UI,
+    Roboto,
+    Helvetica,
+    Arial,
+    "Apple Color Emoji",
+    "Segoe UI Emoji",
+    "Segoe UI Symbol",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  background:
+    radial-gradient(
+      circle at 18% 12%,
+      rgba(var(--accent-rgb), 0.16) 0%,
+      rgba(var(--accent-rgb), 0.07) 28%,
+      transparent 58%
+    ),
+    radial-gradient(
+      circle at 82% 18%,
+      rgba(116, 201, 234, 0.16) 0%,
+      rgba(116, 201, 234, 0.06) 32%,
+      transparent 62%
+    ),
+    linear-gradient(180deg, var(--bg-page-2) 0%, var(--bg-page) 100%);
+
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+@media (max-width: 1024px) {
+  body {
+    background-attachment: scroll;
+  }
+}
+
+/* ---------- Headings ---------- */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Space Mono", system-ui, monospace;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  line-height: 1.05;
+  color: var(--ink);
+}
+
+.site-header__title {
+  font-family: "Space Mono", system-ui, monospace;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  line-height: 1;
+  color: #eef4ff;
+  text-align: center;
+}
+
+/* Avoid Tailwind `.container` collision */
+.page-container {
+  width: min(100% - 2rem, 1200px);
+  margin-inline: auto;
+}
+
+@media (max-width: 768px) {
+  .page-container {
+    width: min(100% - 1rem, 1200px);
+  }
+}
+
+/* Media elements behave */
+img,
+video,
+canvas,
+iframe {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Accent focus ring helper */
+.dp-focus:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.3);
+}
+
+/* =============================================================================
+   REUSABLE DEVFOLIO UI HELPERS
+   -----------------------------------------------------------------------------
+   These are safe global helpers for panels/text/glows.
+   They do not replace existing project card styling.
+============================================================================= */
+
+.dv-panel-dark {
+  background: var(--dv-panel-dark-bg);
+  color: var(--ink);
+  border: 1px solid var(--dv-border-cyan);
+  box-shadow:
+    0 0 0 1px rgba(var(--accent-rgb), 0.24),
+    var(--dv-shadow-panel);
+}
+
+.dv-panel-trans {
+  background: var(--dv-panel-trans-bg);
+  color: var(--ui-trans-ink);
+  border: 1px solid var(--dv-border-trans);
+  box-shadow:
+    0 0 0 1px var(--ui-trans-ring),
+    var(--dv-shadow-panel-strong);
+}
+
+.dv-panel-glow-purple {
+  box-shadow:
+    0 0 0 1px rgba(74, 134, 200, 0.6),
+    0 0 12px 2px rgba(139, 92, 246, 0.45),
+    0 0 24px 4px rgba(74, 134, 200, 0.2),
+    0 14px 28px rgba(0, 0, 0, 0.2);
+}
+
+.dv-panel-glow-cyan {
+  box-shadow:
+    0 0 0 1px rgba(116, 201, 234, 0.35),
+    var(--dv-glow-cyan-soft),
+    var(--dv-shadow-panel);
+}
+
+.dv-inset-border {
+  position: relative;
+}
+
+.dv-inset-border::before {
+  content: "";
+  position: absolute;
+  inset: 6px;
+  pointer-events: none;
+  border: 1px solid var(--dv-inset-border);
+  border-radius: inherit;
+  box-shadow: var(--dv-inset-glow);
+}
+
+.dv-title-dark {
+  color: var(--dv-title-dark);
+}
+
+.dv-subtitle-dark {
+  color: var(--dv-subtitle-dark);
+}
+
+.dv-text-dark {
+  color: var(--dv-text-dark);
+}
+
+.dv-text-dark-muted {
+  color: var(--dv-text-dark-muted);
+}
+
+.dv-title-light {
+  color: var(--ink);
+}
+
+.dv-subtitle-light {
+  color: var(--muted);
+}
+
+.dv-text-light {
+  color: var(--soft);
+}
+
+/* =============================================================================
+   TRANS UI SCHEME
+============================================================================= */
+
+.dp-transSurface {
+  background: var(--dv-panel-trans-bg);
+  color: var(--ui-trans-ink);
+  border: 1px solid var(--ui-trans-border);
+  box-shadow: 0 0 0 1px var(--ui-trans-ring);
+  position: relative;
+}
+
+.dp-transSurface::before {
+  content: "";
+  position: absolute;
+  inset: 6px;
+  pointer-events: none;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+}
+
+.dp-sidebarShell {
+  background: var(--dv-panel-trans-bg);
+  border: 4px solid rgba(147, 197, 253, 0.9);
+}
+
+/* =============================================================================
+   APP SHELL
+============================================================================= */
+
+.app-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.site-header {
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(
+    90deg,
+    var(--blue-900) 0%,
+    var(--blue-700) 55%,
+    var(--blue-500) 100%
+  );
+  border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.26);
+}
+
+.app-body {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+}
+
+.app-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.site-footer {
+  background: linear-gradient(
+    90deg,
+    var(--blue-900) 0%,
+    var(--blue-700) 55%,
+    var(--blue-500) 100%
+  );
+  border-top: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 -10px 26px rgba(0, 0, 0, 0.24);
+  padding: 14px 12px;
+}
+
+.site-footer__inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  font-size: 12px;
+  opacity: 0.9;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* ===============================
+   PROJECT GRID
+================================ */
+
+.projectGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px;
+  max-width: 1500px;
+  margin: 0 auto;
+}
+
+@media (max-width: 1200px) {
+  .projectGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ===============================
+   PROJECT CARD
+================================ */
+
+/* Wrapper -- perspective for 3D flip */
+.pcWrap {
+  perspective: 1200px;
+  min-height: 500px;
+}
+
+.pcCard {
+  position: relative;
+  width: 100%;
+  min-height: 500px;
+  transform-style: preserve-3d;
+  transition: transform 0.55s cubic-bezier(0.4, 0.2, 0.2, 1);
+}
+
+.pcCard--flipped {
+  transform: rotateY(180deg);
+}
+
+/* Shared face styles */
+.pcFace {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  border-radius: 20px;
+  padding: 18px;
+  overflow: hidden;
+  background: var(--dv-panel-trans-bg);
+  color: var(--ui-text-primary);
+
+  /* Outer neon glow border matching accent purple + blue palette */
+  border: 2px solid rgba(139, 92, 246, 0.9);
+  box-shadow:
+    0 0 0 1px rgba(74, 134, 200, 0.6),
+    0 0 12px 2px rgba(139, 92, 246, 0.45),
+    0 0 24px 4px rgba(74, 134, 200, 0.2),
+    0 14px 28px rgba(0, 0, 0, 0.2);
+}
+
+.pcBack {
+  transform: rotateY(180deg);
+}
+
+/* pcRing divs kept in JSX but hidden -- border handled by box-shadow above */
+.pcRing,
+.pcRing--1,
+.pcRing--2,
+.pcRing--3 {
+  display: none;
+}
+
+/* Divider */
+.pcDivider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.38);
+  margin: 10px 0;
+  flex-shrink: 0;
+}
+
+/* GitHub / View / Code row */
+.pcLinks {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  align-items: center;
+  justify-items: center;
+  width: 100%;
+  min-height: 28px;
+  flex-shrink: 0;
+}
+
+.pcTopLink {
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 800;
+  line-height: 1;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.pcTopLink:hover {
+  transform: translateY(-1px);
+  opacity: 0.8;
+}
+
+.pcTopLink--github {
+  color: #243b53;
+}
+
+.pcTopLink--view {
+  color: #1d4ed8;
+}
+
+.pcTopLink--code {
+  color: #7c3aed;
+}
+
+.pcTopLink--disabled {
+  color: rgba(30, 41, 59, 0.32);
+  pointer-events: none;
+  cursor: default;
+  font-weight: 700;
+}
+
+/* Title */
+.pcTitle {
+  margin: 0;
+  font-size: clamp(2rem, 3.5vw, 2.6rem);
+  font-weight: 800;
+  line-height: 1.1;
+  color: var(--ui-text-primary);
+  text-align: left;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  flex-shrink: 0;
+}
+
+.pcTitle--back {
+  font-size: 1rem;
+  text-align: center;
+}
+
+/* Body row -- thumbnail left, meta right */
+.pcBodyRow {
+  display: flex;
+  gap: 14px;
+  align-items: stretch;
+  flex: 1;
+  min-height: 0;
+}
+
+.pcThumbCol {
+  width: 300px;
+  flex-shrink: 0;
+  align-self: stretch;
+}
+
+/* 350x350 thumbnail */
+.pcThumb {
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  object-fit: cover;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+  display: block;
+}
+
+.pcThumbPlaceholder {
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+}
+
+.pcMetaCol {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 10px;
+  align-content: start;
+}
+
+/* Skills / Software meta */
+.pcMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.pcMetaLabel {
+  font-size: 0.85rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--ui-text-secondary);
+}
+
+.pcMetaText {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--ui-text-primary);
+  line-height: 1.5;
+}
+
+/* Read More / Go Back button row */
+.pcReadMoreRow {
+  display: flex;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: auto;
+  padding-top: 4px;
+}
+
+.pcReadMoreBtn {
+  appearance: none;
+  border: none;
+  border-radius: 999px;
+  padding: 7px 22px;
+  font-size: 0.85rem;
+  font-weight: 800;
+  cursor: pointer;
+  background: rgba(167, 243, 208, 0.85);
+  color: #064e3b;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.1);
+  transition:
+    background 0.18s ease,
+    transform 0.18s ease;
+  letter-spacing: 0.02em;
+}
+
+.pcReadMoreBtn:hover {
+  background: rgba(167, 243, 208, 1);
+  transform: translateY(-1px);
+}
+
+.pcReadMoreBtn--back {
+  background: rgba(253, 230, 138, 0.85);
+  color: #78350f;
+  border: none;
+}
+
+.pcReadMoreBtn--back:hover {
+  background: rgba(253, 230, 138, 1);
+  transform: translateY(-1px);
+}
+
+/* Back face layout */
+.pcBackInner {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: 0;
+}
+
+.pcBackSubtext {
+  margin: 4px 0 0;
+  color: var(--ui-text-secondary);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.pcBackBody {
+  flex: 1;
+  overflow-y: auto;
+  padding: 2px 2px;
+}
+
+.pcDescription {
+  margin: 0;
+  color: var(--ui-text-primary);
+  line-height: 1.65;
+  font-size: 0.88rem;
+  font-weight: 500;
+  white-space: pre-wrap;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .pcWrap,
+  .pcCard {
+    min-height: 500px;
+  }
+
+  .pcTitle {
+    font-size: clamp(1.6rem, 5vw, 2rem);
+  }
+
+  .pcThumbCol {
+    width: 180px;
+  }
+}
+
+/* ===============================
+   DELTAPETS LINK PANEL
+   Column 1 promo above About panel.
+   Does NOT change trans colors.
+================================ */
+
+.deltaPetsLinkPanel {
+  width: 100%;
+  margin: 0 0 18px;
+  padding: 18px 20px;
+  border-radius: 20px;
+  background: var(--dv-panel-dark-bg);
+  border: 1px solid var(--dv-border-cyan);
+  box-shadow:
+    0 0 0 1px rgba(var(--accent-rgb), 0.24),
+    var(--dv-glow-cyan-soft),
+    var(--dv-shadow-panel);
+  color: var(--ink);
+}
+
+.deltaPetsLinkPanel__eyebrow {
+  margin-bottom: 6px;
+  color: var(--blue-300);
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.deltaPetsLinkPanel__title {
+  margin: 0 0 8px;
+  color: #ffffff;
+  font-family: "Space Mono", system-ui, monospace;
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 800;
+  line-height: 1;
+}
+
+.deltaPetsLinkPanel__text {
+  max-width: 720px;
+  margin: 0 0 14px;
+  color: var(--muted);
+  font-size: 0.98rem;
+  line-height: 1.65;
+}
+
+.deltaPetsLinkPanel__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0 18px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 800;
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  box-shadow: 0 0 18px rgba(var(--accent-rgb), 0.32);
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    opacity 0.18s ease;
+}
+
+.deltaPetsLinkPanel__button:hover {
+  transform: translateY(-1px);
+  opacity: 0.92;
+  box-shadow: 0 0 24px rgba(var(--accent-rgb), 0.46);
+}

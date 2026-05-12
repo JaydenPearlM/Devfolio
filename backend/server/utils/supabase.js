@@ -1,60 +1,120 @@
+// do not delete
 // backend/server/utils/supabase.js
-const { createClient } = require("@supabase/supabase-js");
 
-const SUPABASE_URL = process.env.SUPABASE_URL;
+import { createClient } from "@supabase/supabase-js";
 
-// Server-side (service role) key: for INSERT/UPDATE/DELETE + Storage writes
-const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+/*
+Ensure an environment variable exists.
+Accepts multiple possible names.
+*/
+function requireEnvAny(names) {
+  for (const name of names) {
+    const v = process.env[name];
+    if (v && String(v).trim()) {
+      return String(v).trim();
+    }
+  }
 
-// Optional anon key: for safe read clients (if you want)
-const ANON_KEY = process.env.SUPABASE_ANON_KEY;
-
-if (!SUPABASE_URL || !SERVICE_KEY) {
-  console.error("[supabase] Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY");
+  throw new Error(
+    `[supabase] Missing env var. Tried: ${names.join(", ")}`
+  );
 }
 
-let adminClient = null;
-let publicClient = null;
+/*
+Cached clients
+*/
+let client;
+let adminClient;
 
-function getAdminClient() {
-  if (adminClient) return adminClient;
+/*
+Public client (anon key)
+Used for safe reads if needed
+*/
+export function getClient() {
+  if (!client) {
+    const url = requireEnvAny([
+      "SUPABASE_URL",
+      "VITE_SUPABASE_URL",
+      "NEXT_PUBLIC_SUPABASE_URL",
+    ]);
 
-  adminClient = createClient(SUPABASE_URL, SERVICE_KEY, {
-    auth: { persistSession: false, autoRefreshToken: false },
-    global: { fetch },
-  });
+    const key = requireEnvAny([
+      "SUPABASE_ANON_KEY",
+      "SUPABASE_PUBLIC_KEY",
+      "VITE_SUPABASE_ANON_KEY",
+      "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+    ]);
+
+    client = createClient(url, key, {
+      auth: {
+        persistSession: false,
+        autoRefreshToken: false,
+        detectSessionInUrl: false,
+      },
+    });
+  }
+
+  return client;
+}
+
+/*
+Admin client (service role key)
+Used for inserts, deletes, storage, analytics, etc.
+NEVER expose this key to frontend code.
+*/
+export function getAdminClient() {
+  if (!adminClient) {
+    const url = requireEnvAny([
+      "SUPABASE_URL",
+      "VITE_SUPABASE_URL",
+      "NEXT_PUBLIC_SUPABASE_URL",
+    ]);
+
+    const key = requireEnvAny([
+      "SUPABASE_SERVICE_ROLE_KEY",
+      "SUPABASE_SERVICE_KEY",
+      "SUPABASE_SERVICE_ROLE",
+    ]);
+
+    adminClient = createClient(url, key, {
+      auth: {
+        persistSession: false,
+        autoRefreshToken: false,
+        detectSessionInUrl: false,
+      },
+    });
+  }
 
   return adminClient;
 }
 
-function getClient() {
-  // If anon key isn't set, fall back to admin client for reads (still works)
-  if (!ANON_KEY) return getAdminClient();
-  if (publicClient) return publicClient;
-
-  publicClient = createClient(SUPABASE_URL, ANON_KEY, {
-    auth: { persistSession: false, autoRefreshToken: false },
-    global: { fetch },
-  });
-
-  return publicClient;
-}
-
-/**
- * Upload an in-memory buffer to Supabase Storage and return a PUBLIC url.
- * Requires bucket to be PUBLIC, or you’ll need signed URLs instead.
- */
-async function uploadBuffer({ bucket, path, buffer, contentType, upsert = true }) {
+/*
+Upload helper for Supabase Storage
+Used by projects.js
+*/
+export async function uploadBuffer({
+  bucket,
+  path,
+  buffer,
+  contentType,
+  upsert = true,
+}) {
   const supabase = getAdminClient();
 
-  const { error: upErr } = await supabase.storage
+  const { error } = await supabase.storage
     .from(bucket)
-    .upload(path, buffer, { contentType, upsert });
+    .upload(path, buffer, {
+      contentType,
+      upsert,
+    });
 
-  if (upErr) throw upErr;
+  if (error) {
+    throw error;
+  }
 
-  const { data } = supabase.storage.from(bucket).getPublicUrl(path);
+  const { data } = supabase.storage
+    .from(bucket)
+    .getPublicUrl(path);
+
   return data.publicUrl;
 }
-
-module.exports = { getAdminClient, getClient, uploadBuffer };

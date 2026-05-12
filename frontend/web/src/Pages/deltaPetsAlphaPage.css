@@ -1,0 +1,197 @@
+/* =============================================================================
+   DELTAPETS ALPHA PAGE - NEON TRANS PANELS
+   -----------------------------------------------------------------------------
+   Uses global trans gradient system with enhanced neon effects
+   All panels use the same transparent glass language from global.css
+   Enhanced with neon glows and bright accent edges
+============================================================================= */
+
+/* ---------- Base Neon Panel ---------- */
+.dp-neon-panel {
+  /* Use global trans gradient */
+  background: linear-gradient(135deg, var(--ui-trans-a), var(--ui-trans-b), var(--ui-trans-c));
+  color: var(--ui-trans-ink);
+  
+  /* Neon border system */
+  border: 2px solid rgba(147, 197, 253, 0.8);
+  
+  /* Multi-layer neon glow */
+  box-shadow: 
+    0 0 0 1px rgba(147, 197, 253, 0.6),
+    0 0 15px rgba(147, 197, 253, 0.4),
+    0 0 30px rgba(139, 92, 246, 0.25),
+    inset 0 0 20px rgba(255, 255, 255, 0.08);
+  
+  border-radius: 1.5rem;
+  padding: 2.5rem;
+  position: relative;
+  overflow: visible;
+  transition: all 0.3s ease;
+}
+
+.dp-neon-panel:hover {
+  box-shadow: 
+    0 0 0 1px rgba(147, 197, 253, 0.8),
+    0 0 20px rgba(147, 197, 253, 0.5),
+    0 0 40px rgba(139, 92, 246, 0.3),
+    inset 0 0 25px rgba(255, 255, 255, 0.1);
+}
+
+/* Inner light effect (matches global dp-transSurface) */
+.dp-neon-panel::before {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  pointer-events: none;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.15);
+}
+
+@media (max-width: 768px) {
+  .dp-neon-panel {
+    padding: 1.5rem;
+  }
+}
+
+/* ---------- Neon Panel Variants (Different Edge Colors) ---------- */
+
+/* Cyan edge glow */
+.dp-neon-panel--cyan {
+  border-color: rgba(34, 211, 238, 0.8);
+  box-shadow: 
+    0 0 0 1px rgba(34, 211, 238, 0.6),
+    0 0 15px rgba(34, 211, 238, 0.4),
+    0 0 30px rgba(34, 211, 238, 0.2),
+    inset 0 0 20px rgba(255, 255, 255, 0.08);
+}
+
+.dp-neon-panel--cyan:hover {
+  box-shadow: 
+    0 0 0 1px rgba(34, 211, 238, 0.9),
+    0 0 20px rgba(34, 211, 238, 0.6),
+    0 0 40px rgba(34, 211, 238, 0.3),
+    inset 0 0 25px rgba(255, 255, 255, 0.1);
+}
+
+/* Purple edge glow */
+.dp-neon-panel--purple {
+  border-color: rgba(168, 85, 247, 0.8);
+  box-shadow: 
+    0 0 0 1px rgba(168, 85, 247, 0.6),
+    0 0 15px rgba(168, 85, 247, 0.4),
+    0 0 30px rgba(168, 85, 247, 0.2),
+    inset 0 0 20px rgba(255, 255, 255, 0.08);
+}
+
+.dp-neon-panel--purple:hover {
+  box-shadow: 
+    0 0 0 1px rgba(168, 85, 247, 0.9),
+    0 0 20px rgba(168, 85, 247, 0.6),
+    0 0 40px rgba(168, 85, 247, 0.3),
+    inset 0 0 25px rgba(255, 255, 255, 0.1);
+}
+
+/* Green edge glow */
+.dp-neon-panel--green {
+  border-color: rgba(34, 197, 94, 0.8);
+  box-shadow: 
+    0 0 0 1px rgba(34, 197, 94, 0.6),
+    0 0 15px rgba(34, 197, 94, 0.4),
+    0 0 30px rgba(34, 197, 94, 0.2),
+    inset 0 0 20px rgba(255, 255, 255, 0.08);
+}
+
+.dp-neon-panel--green:hover {
+  box-shadow: 
+    0 0 0 1px rgba(34, 197, 94, 0.9),
+    0 0 20px rgba(34, 197, 94, 0.6),
+    0 0 40px rgba(34, 197, 94, 0.3),
+    inset 0 0 25px rgba(255, 255, 255, 0.1);
+}
+
+/* ---------- Text Styling ---------- */
+
+.dp-panel-text {
+  color: var(--ui-trans-ink);
+  position: relative;
+  z-index: 1;
+}
+
+.dp-neon-heading {
+  color: var(--ui-trans-ink);
+  text-shadow: 0 0 10px rgba(34, 211, 238, 0.3);
+  position: relative;
+  z-index: 1;
+}
+
+.dp-subheading-pink {
+  color: #ec4899;
+  text-shadow: 0 0 8px rgba(236, 72, 153, 0.2);
+}
+
+.dp-highlight-cyan {
+  color: #22d3ee;
+  font-weight: bold;
+  text-shadow: 0 0 5px rgba(34, 211, 238, 0.3);
+}
+
+.dp-bullet {
+  color: #22d3ee;
+  font-weight: bold;
+  text-shadow: 0 0 5px rgba(34, 211, 238, 0.3);
+}
+
+/* ---------- Inner Glow Callout Box ---------- */
+
+.dp-inner-glow {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(147, 197, 253, 0.4);
+  box-shadow: 
+    0 0 0 1px rgba(147, 197, 253, 0.2),
+    inset 0 0 15px rgba(147, 197, 253, 0.1);
+  position: relative;
+}
+
+.dp-inner-glow::before {
+  content: "";
+  position: absolute;
+  inset: 4px;
+  pointer-events: none;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: inherit;
+}
+
+/* ---------- Feature Cards ---------- */
+
+.dp-feature-card {
+  padding: 1rem;
+  border-radius: 0.75rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(147, 197, 253, 0.3);
+  box-shadow: 
+    0 0 0 1px rgba(147, 197, 253, 0.15),
+    inset 0 0 10px rgba(255, 255, 255, 0.05);
+  transition: all 0.25s ease;
+  position: relative;
+}
+
+.dp-feature-card:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(147, 197, 253, 0.5);
+  box-shadow: 
+    0 0 0 1px rgba(147, 197, 253, 0.3),
+    0 0 10px rgba(147, 197, 253, 0.2),
+    inset 0 0 15px rgba(255, 255, 255, 0.08);
+  transform: translateY(-2px);
+}
+
+.dp-feature-card::before {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  pointer-events: none;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: inherit;
+  opacity: 0.5;
+}

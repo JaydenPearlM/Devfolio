@@ -1,66 +1,51 @@
-// server/controllers/analyticsController.js
-// Supabase-backed analytics controller (same-origin API; NO CORS)
+// do not delete
+// backend/server/controllers/analyticsController.js
 
-const { getAdminClient } = require("../utils/supabase");
-const crypto = require("crypto");
+import crypto from "crypto";
+import { getAdminClient } from "../utils/supabase.js";
 
-/* ───────────────────── Day bucketing helpers ───────────────────── */
+const ANALYTICS_EVENTS = {
+  PAGEVIEW: "pageview",
+  PROJECT_IMPRESSION: "project_impression",
+  PROJECT_CLICK: "project_click",
+  RESUME_CLICK: "resume_click",
+  CTA_CLICK: "cta_click",
+  LOAD_TIME: "load_time",
+  CLIENT_ERROR: "client_error",
+  SESSION_END: "session_end",
+};
 
-// UTC day key YYYY-MM-DD
-function ymdUTC(d) {
-  const y = d.getUTCFullYear();
-  const m = String(d.getUTCMonth() + 1).padStart(2, "0");
-  const day = String(d.getUTCDate()).padStart(2, "0");
-  return `${y}-${m}-${day}`;
+const ANALYTICS_TABLE_CANDIDATES = ["analytics_events", "analytics"];
+
+function clamp(n, lo, hi) {
+  return Math.max(lo, Math.min(hi, n));
 }
 
-// Local day key using client-provided offset (minutes east of UTC).
-// Example: Eastern Standard Time → tzOffset = -300.
-function ymdLocal(d, offsetMin = 0) {
-  const t = new Date(d.getTime() + offsetMin * 60_000);
-  const y = t.getUTCFullYear();
-  const m = String(t.getUTCMonth() + 1).padStart(2, "0");
-  const day = String(t.getUTCDate()).padStart(2, "0");
-  return `${y}-${m}-${day}`;
+function iso(value) {
+  return new Date(value).toISOString();
 }
 
-// Choose the right formatter per request; falls back to UTC if missing.
-function makeDayKey(req) {
-  const off = Number.parseInt(req.query.tzOffset, 10);
-  const useLocal = Number.isFinite(off);
-  return (date) => (useLocal ? ymdLocal(date, off) : ymdUTC(date));
-}
+function normalizePath(value) {
+  if (!value) return "/";
 
-/* ───────────────────────── Utilities ───────────────────────── */
-
-const clamp = (n, lo, hi) => Math.max(lo, Math.min(hi, n));
-const iso   = (x) => new Date(x).toISOString();
-
-function normalizePath(p) {
-  if (!p) return "/";
   try {
-    const s = String(p);
+    const s = String(value);
+
     if (s.startsWith("http://") || s.startsWith("https://")) {
       return new URL(s).pathname || "/";
     }
-    return s.startsWith("/") ? s : "/" + s;
+
+    return s.startsWith("/") ? s : `/${s}`;
   } catch {
     return "/";
   }
 }
 
-function rangeFromDays(days = 30) {
-  const end   = new Date();             // now
-  const start = new Date(end);
-  // inclusive window: [start, end]
-  start.setUTCDate(end.getUTCDate() - Number(days || 30) + 1);
-  return { start, end };
-}
-
 function ipFrom(req) {
   return (req.headers["x-forwarded-for"] || req.ip || "")
     .toString()
-    .split(",")[0] || null;
+    .split(",")[0]
+    .trim() || null;
 }
 
 function hashSession(ip, ua) {
@@ -68,15 +53,105 @@ function hashSession(ip, ua) {
   return crypto.createHash("sha1").update(raw).digest("hex").slice(0, 16);
 }
 
-/* ─────────────── Project title lookup (Devfolio table) ───────────────
-   Your projects live in table "Devfolio" with numeric int8 primary key `id`.
-   We hydrate titles so charts never show raw IDs.
------------------------------------------------------------------------ */
+function getMetaName(meta) {
+  if (!meta || typeof meta !== "object") return "";
+  return String(meta.name || "").trim().toLowerCase();
+}
+
+function rangeFromDays(days = 30) {
+  const safeDays = clamp(Number(days || 30), 1, 365);
+  const end = new Date();
+  const start = new Date(end);
+  start.setUTCDate(end.getUTCDate() - safeDays + 1);
+  return { start, end };
+}
+
+function logSupabaseError(label, error, payload = null) {
+  console.error(`[analytics] ${label}`, {
+    message: error?.message || String(error),
+    details: error?.details || null,
+    hint: error?.hint || null,
+    code: error?.code || null,
+    payload,
+  });
+}
+
+function pickFirst(row, keys, fallback = null) {
+  for (const key of keys) {
+    if (row && row[key] !== undefined && row[key] !== null) {
+      return row[key];
+    }
+  }
+  return fallback;
+}
+
+function normalizeEventRow(row = {}) {
+  const eventType = String(
+    pickFirst(row, ["event_type", "type", "eventType"], "")
+  )
+    .trim()
+    .toLowerCase();
+
+  const ts = pickFirst(row, ["ts", "created_at", "createdAt"], null);
+  const loadMsRaw = pickFirst(
+    row,
+    ["load_ms", "loadMs", "duration_ms", "durationMs"],
+    null
+  );
+  const projectId = pickFirst(row, ["project_id", "projectId"], null);
+  const sessionId = pickFirst(row, ["session_id", "sessionId"], null);
+  const meta = pickFirst(row, ["meta", "metadata", "payload"], null);
+
+  return {
+    ...row,
+    event_type: eventType,
+    ts,
+    path: normalizePath(pickFirst(row, ["path", "pathname"], "/")),
+    load_ms: Number.isFinite(Number(loadMsRaw)) ? Number(loadMsRaw) : null,
+    project_id: projectId != null ? String(projectId) : null,
+    session_id: sessionId != null ? String(sessionId) : null,
+    meta: meta && typeof meta === "object" ? meta : null,
+  };
+}
+
+function extractMissingColumn(error) {
+  const text = `${error?.message || ""} ${error?.details || ""} ${error?.hint || ""}`;
+
+  const patterns = [
+    /column ["']?([a-zA-Z0-9_]+)["']? does not exist/i,
+    /Could not find the ['"]([a-zA-Z0-9_]+)['"] column/i,
+    /schema cache.*column ['"]([a-zA-Z0-9_]+)['"]/i,
+  ];
+
+  for (const pattern of patterns) {
+    const match = text.match(pattern);
+    if (match?.[1]) {
+      return match[1];
+    }
+  }
+
+  return null;
+}
+
+async function getAnalyticsTable(supa) {
+  for (const table of ANALYTICS_TABLE_CANDIDATES) {
+    const { error } = await supa.from(table).select("*").limit(1);
+    if (!error) {
+      return table;
+    }
+  }
+
+  return ANALYTICS_TABLE_CANDIDATES[0];
+}
+
 async function fetchProjectTitles(supa, ids = []) {
   const uniq = [...new Set((ids || []).filter(Boolean).map(String))];
   if (!uniq.length) return new Map();
 
-  const numericIds = uniq.map((x) => Number(x)).filter((n) => Number.isFinite(n));
+  const numericIds = uniq
+    .map((x) => Number(x))
+    .filter((n) => Number.isFinite(n));
+
   if (!numericIds.length) return new Map();
 
   const { data, error } = await supa
@@ -85,109 +160,193 @@ async function fetchProjectTitles(supa, ids = []) {
     .in("id", numericIds);
 
   if (error) {
-    console.warn("[analytics] fetchProjectTitles Devfolio lookup error:", error);
+    logSupabaseError("fetchProjectTitles failed", error);
     return new Map();
   }
 
   const map = new Map();
+
   for (const row of data || []) {
-    const title = row.title || String(row.id);
-    map.set(String(row.id), title);
+    map.set(String(row.id), row.title || `Project ${row.id}`);
   }
+
   return map;
 }
 
-/* ───────────────────────── Insert helper ───────────────────── */
+async function adaptiveInsert(supa, table, payload) {
+  let nextPayload = { ...payload };
+
+  for (let i = 0; i < 8; i += 1) {
+    const { error } = await supa.from(table).insert(nextPayload);
+
+    if (!error) {
+      return { ok: true };
+    }
+
+    const missingColumn = extractMissingColumn(error);
+
+    if (missingColumn && missingColumn in nextPayload) {
+      logSupabaseError(
+        `adaptiveInsert stripping missing column "${missingColumn}"`,
+        error,
+        nextPayload
+      );
+      delete nextPayload[missingColumn];
+      continue;
+    }
+
+    throw error;
+  }
+
+  throw new Error("adaptiveInsert failed after multiple retries");
+}
 
 async function insertEvent(req, event_type, fields = {}) {
-  const supa        = await getAdminClient();
-  const ip          = ipFrom(req);
-  const user_agent  = req.get("user-agent") || null;
-  const referrer    = req.get("referer") || null;
+  const supa = getAdminClient();
+  const table = await getAnalyticsTable(supa);
 
-  // Prefer provided session_id; support camelCase from client (sessionId)
+  const ip = ipFrom(req);
+  const user_agent = req.get("user-agent") || null;
+  const referrer = req.get("referer") || null;
+
   const session_id =
     fields.session_id ??
     req.body?.session_id ??
-    req.body?.sessionId ?? // accept camelCase from client beacons
+    req.body?.sessionId ??
     hashSession(ip, user_agent);
 
-  // Accept both camelCase and snake_case project id
   const project_id =
     fields.projectId ??
     req.body?.project_id ??
-    req.body?.projectId ?? // accept camelCase
+    req.body?.projectId ??
     null;
 
-  // Optional JSONB meta (e.g., { source, action, resume_url })
-  const meta =
-    fields.meta ??
-    req.body?.meta ??
-    null;
+  const meta = fields.meta ?? req.body?.meta ?? null;
+
+  const load_ms =
+    fields.ms != null
+      ? Number(fields.ms)
+      : req.body?.ms != null
+        ? Number(req.body.ms)
+        : req.body?.loadMs != null
+          ? Number(req.body.loadMs)
+          : req.body?.load_ms != null
+            ? Number(req.body.load_ms)
+            : null;
 
   const payload = {
-    event_type,                // text
-    ts: new Date(),            // timestamptz
+    event_type,
+    ts: new Date().toISOString(),
     path: normalizePath(
       fields.path ?? req.body?.path ?? req.query?.path ?? referrer ?? "/"
     ),
     project_id,
-    load_ms:
-      // accept `ms`, `loadMs`, or `load_ms`
-      fields.ms != null
-        ? Number(fields.ms)
-        : req.body?.ms != null
-        ? Number(req.body.ms)
-        : req.body?.loadMs != null
-        ? Number(req.body.loadMs)
-        : req.body?.load_ms != null
-        ? Number(req.body.load_ms)
-        : null,
+    load_ms: Number.isFinite(load_ms) ? load_ms : null,
     referrer,
     user_agent,
     ip,
     session_id,
-    meta, // JSONB
+    meta,
   };
 
-  const { error } = await supa.from("analytics_events").insert(payload);
-  if (error) throw error;
-  return { ok: true };
+  try {
+    await adaptiveInsert(supa, table, payload);
+    return { ok: true };
+  } catch (error) {
+    logSupabaseError(`insertEvent failed for ${event_type}`, error, payload);
+    throw error;
+  }
 }
 
-/* ───────────────────────── Beacon endpoints ─────────────────── */
-
-exports.recordPageview = async (req, res) => {
+export async function recordPageview(req, res) {
   try {
-    await insertEvent(req, "pageview", { path: req.body?.path });
+    await insertEvent(req, ANALYTICS_EVENTS.PAGEVIEW, {
+      path: req.body?.path,
+    });
+
     res.status(204).end();
   } catch (e) {
     console.error("[analytics] recordPageview", e);
     res.status(500).json({ error: "recordPageview failed" });
   }
-};
+}
 
-exports.recordProjectClick = async (req, res) => {
+export async function recordLoadTime(req, res) {
+  try {
+    const ms = req.body?.ms ?? req.body?.loadMs ?? req.body?.load_ms ?? 0;
+
+    await insertEvent(req, ANALYTICS_EVENTS.LOAD_TIME, {
+      ms: Number(ms),
+      path: req.body?.path,
+    });
+
+    res.status(204).end();
+  } catch (e) {
+    console.error("[analytics] recordLoadTime", e);
+    res.status(500).json({ error: "recordLoadTime failed" });
+  }
+}
+
+export async function recordProjectImpression(req, res) {
   try {
     const projectId = req.body?.projectId ?? req.body?.project_id ?? null;
-    await insertEvent(req, "project_click", { projectId });
+
+    await insertEvent(req, ANALYTICS_EVENTS.PROJECT_IMPRESSION, {
+      projectId,
+      path: req.body?.path,
+      meta: {
+        source: req.body?.source ?? req.body?.meta?.source ?? "project-card",
+        action:
+          req.body?.action ?? req.body?.meta?.action ?? "project_impression",
+        ...(req.body?.meta && typeof req.body.meta === "object"
+          ? req.body.meta
+          : {}),
+      },
+    });
+
+    res.status(204).end();
+  } catch (e) {
+    console.error("[analytics] recordProjectImpression", e);
+    res.status(500).json({ error: "recordProjectImpression failed" });
+  }
+}
+
+export async function recordProjectClick(req, res) {
+  try {
+    const projectId = req.body?.projectId ?? req.body?.project_id ?? null;
+
+    await insertEvent(req, ANALYTICS_EVENTS.PROJECT_CLICK, {
+      projectId,
+      path: req.body?.path,
+      meta: {
+        source: req.body?.source ?? req.body?.meta?.source ?? "project-card",
+        action: req.body?.action ?? req.body?.meta?.action ?? "project_click",
+        destination:
+          req.body?.destination ?? req.body?.meta?.destination ?? null,
+        href: req.body?.href ?? req.body?.meta?.href ?? null,
+        ...(req.body?.meta && typeof req.body.meta === "object"
+          ? req.body.meta
+          : {}),
+      },
+    });
+
     res.status(204).end();
   } catch (e) {
     console.error("[analytics] recordProjectClick", e);
     res.status(500).json({ error: "recordProjectClick failed" });
   }
-};
+}
 
-exports.recordResumeClick = async (req, res) => {
+export async function recordResumeClick(req, res) {
   try {
-    // Build strong metadata so analytics never loses context
     const meta = {
-      source: req.body?.source ?? null,
-      action: req.body?.action ?? null,
-      resume_url: req.body?.resume_url ?? null,
+      source: req.body?.source ?? req.body?.meta?.source ?? null,
+      action: req.body?.action ?? req.body?.meta?.action ?? null,
+      resume_url: req.body?.resume_url ?? req.body?.meta?.resume_url ?? null,
+      name: ANALYTICS_EVENTS.RESUME_CLICK,
     };
 
-    await insertEvent(req, "resume_click", {
+    await insertEvent(req, ANALYTICS_EVENTS.RESUME_CLICK, {
       path: req.body?.path,
       meta,
     });
@@ -197,371 +356,329 @@ exports.recordResumeClick = async (req, res) => {
     console.error("[analytics] recordResumeClick", e);
     res.status(500).json({ error: "recordResumeClick failed" });
   }
-};
+}
 
-exports.recordLoadTime = async (req, res) => {
+export async function recordClientError(req, res) {
   try {
-    const ms =
-      req.body && req.body.ms != null
-        ? Number(req.body.ms)
-        : req.body && req.body.loadMs != null
-        ? Number(req.body.loadMs)
-        : Number(req.body?.load_ms ?? 0);
-    await insertEvent(req, "load_time", { ms, path: req.body?.path });
-    res.status(204).end();
-  } catch (e) {
-    console.error("[analytics] recordLoadTime", e);
-    res.status(500).json({ error: "recordLoadTime failed" });
-  }
-};
+    await insertEvent(req, ANALYTICS_EVENTS.CLIENT_ERROR, {
+      path: req.body?.path,
+      meta: {
+        message: req.body?.msg ?? req.body?.meta?.message ?? "client_error",
+        ...(req.body?.meta && typeof req.body.meta === "object"
+          ? req.body.meta
+          : {}),
+      },
+    });
 
-exports.recordClientError = async (_req, res) => {
-  try {
-    await insertEvent(_req, "client_error", {});
     res.status(204).end();
   } catch (e) {
     console.error("[analytics] recordClientError", e);
     res.status(500).json({ error: "recordClientError failed" });
   }
-};
+}
 
-exports.recordSessionEnd = async (req, res) => {
+export async function recordSessionEnd(req, res) {
   try {
-    await insertEvent(req, "session_end", { path: req.body?.path });
+    await insertEvent(req, ANALYTICS_EVENTS.SESSION_END, {
+      path: req.body?.path,
+      meta: {
+        reason: req.body?.reason ?? null,
+        duration_ms:
+          req.body?.duration_ms != null ? Number(req.body.duration_ms) : null,
+      },
+    });
+
     res.status(204).end();
   } catch (e) {
     console.error("[analytics] recordSessionEnd", e);
     res.status(500).json({ error: "session_end_failed" });
   }
-};
+}
 
-exports.ping = (_req, res) =>
-  res.json({ ok: true, at: new Date().toISOString() });
-
-/* ───────────────────────── Public Summary (homepage) ──────────
-   GET /api/analytics/public?range=7[&tzOffset=-300]
------------------------------------------------------------------ */
-exports.getPublicSummary = async (req, res) => {
+export async function recordCtaClick(req, res) {
   try {
-    const dayKey = makeDayKey(req);
-
-    const days  = clamp(parseInt(req.query.range || "7", 10) || 7, 1, 365);
-    const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
-
-    const supa = await getAdminClient();
-    const { data, error } = await supa
-      .from("analytics_events")
-      .select("ts,event_type,load_ms,project_id")
-      .gte("ts", iso(since));
-    if (error) throw error;
-
-    const byDayType     = new Map();
-    const projectCounts = new Map();
-
-    for (const row of data || []) {
-      const dayStr = dayKey(new Date(row.ts));
-
-      // normalize the type
-      const t = String(row.event_type || "").trim().toLowerCase();
-
-      const key = `${dayStr}|${t}`;
-      const rec = byDayType.get(key) || { day: dayStr, type: t, count: 0, msVals: [] };
-      rec.count += 1;
-      if (t === "load_time") {
-        const n = Number(row.load_ms);
-        if (Number.isFinite(n)) rec.msVals.push(n);
-      }
-      byDayType.set(key, rec);
-
-      if (t === "project_click" && row.project_id) {
-        projectCounts.set(row.project_id, (projectCounts.get(row.project_id) || 0) + 1);
-      }
-    }
-
-    const rows = [...byDayType.values()].sort((a, b) => a.day.localeCompare(b.day));
-
-    const seriesBy = (t) =>
-      rows
-        .filter((r) => r.type === t)
-        .map((r) => ({ day: r.day, count: r.count }));
-
-    const loadAvg = (() => {
-      const all = rows.filter((r) => r.type === "load_time").flatMap((r) => r.msVals);
-      return all.length
-        ? Math.round(all.reduce((a, b) => a + b, 0) / all.length)
-        : null;
-    })();
-
-    const totals = {
-      pageviews: rows.filter((r) => r.type === "pageview").reduce((a, b) => a + b.count, 0),
-      resumeClicks: rows.filter((r) => r.type === "resume_click").reduce((a, b) => a + b.count, 0),
-      projectClicks: rows.filter((r) => r.type === "project_click").reduce((a, b) => a + b.count, 0),
-      errors: rows.filter((r) => r.type === "client_error").reduce((a, b) => a + b.count, 0),
-      clientErrors: rows.filter((r) => r.type === "client_error").reduce((a, b) => a + b.count, 0),
-      avgLoadMs: loadAvg,
-      avgLoadTimeMs: loadAvg,
+    const meta = {
+      ...(req.body?.meta && typeof req.body.meta === "object"
+        ? req.body.meta
+        : {}),
+      name: String(
+        req.body?.meta?.name ?? req.body?.name ?? ANALYTICS_EVENTS.CTA_CLICK
+      )
+        .trim()
+        .toLowerCase(),
+      source: req.body?.meta?.source ?? req.body?.source ?? null,
+      href: req.body?.meta?.href ?? req.body?.href ?? null,
     };
 
-    // Build and title-ize top projects (limit 5)
-    const topProjectsRaw = [...projectCounts.entries()]
-      .map(([projectId, count]) => ({ projectId: String(projectId), count }))
-      .sort((a, b) => b.count - a.count)
-      .slice(0, 5);
+    await insertEvent(req, ANALYTICS_EVENTS.CTA_CLICK, {
+      path: req.body?.path,
+      meta,
+    });
 
-    // ✅ Filter out deleted projects (no title = no bar)
-    const titleMap     = await fetchProjectTitles(supa, topProjectsRaw.map(p => p.projectId));
-    const existingIds  = new Set([...titleMap.keys()].map(String));
-    const topProjects  = topProjectsRaw
-      .filter(p => existingIds.has(String(p.projectId)))
-      .map(p => ({
-        projectId: p.projectId,
-        clicks:    p.count,
-        title:     titleMap.get(String(p.projectId)),
-      }));
+    res.status(204).end();
+  } catch (e) {
+    console.error("[analytics] recordCtaClick", {
+      code: e?.code || null,
+      details: e?.details || null,
+      hint: e?.hint || null,
+      message: e?.message || String(e),
+    });
+    res.status(500).json({ error: "recordCtaClick failed" });
+  }
+}
+
+export async function ping(_req, res) {
+  try {
+    const supa = getAdminClient();
+    const table = await getAnalyticsTable(supa);
+
+    const { error } = await supa.from(table).select("*").limit(1);
+    if (error) throw error;
 
     res.json({
-      rangeDays: days,
-      totals,
-      series: { pageviews: seriesBy("pageview") },
-      top: { projects: topProjects },
+      ok: true,
+      at: new Date().toISOString(),
+      table,
+      db: "connected",
     });
   } catch (e) {
-    console.error("[analytics] getPublicSummary", e);
-    res.status(500).json({ error: "getPublicSummary failed" });
+    console.error("[analytics] ping failed", e);
+    res.status(500).json({
+      ok: false,
+      error: e?.message || "analytics ping failed",
+    });
   }
-};
+}
 
-// Back-compat alias so routes can use either name without changing logic
-exports.publicSummary = exports.getPublicSummary;
-
-/* ───────────────────────── Admin Analytics (dashboard) ────────
-   GET /api/analytics?range=30[&tzOffset=-300]
-   Returns KPI-friendly shape + rich series.
------------------------------------------------------------------ */
-exports.getAnalytics = async (req, res) => {
+export async function getAnalytics(req, res) {
   try {
-    const dayKey         = makeDayKey(req);
-    const days           = Number(req.query.days || req.query.range || 30);
-    const { start, end } = rangeFromDays(days);
-    const supa           = await getAdminClient();
+    const { start, end } = rangeFromDays(Number(req.query.range || 30));
+    const supa = getAdminClient();
+    const table = await getAnalyticsTable(supa);
 
     const { data, error } = await supa
-      .from("analytics_events")
-      .select("ts,event_type,load_ms,ip,user_agent,project_id,session_id")
+      .from(table)
+      .select("*")
       .gte("ts", start.toISOString())
-      .lte("ts", end.toISOString());
+      .lte("ts", end.toISOString())
+      .order("ts", { ascending: false });
 
-    if (error) throw error;
+    if (error) {
+      const fallback = await supa
+        .from(table)
+        .select("*")
+        .gte("created_at", start.toISOString())
+        .lte("created_at", end.toISOString())
+        .order("created_at", { ascending: false });
 
-    const byDayType      = new Map(); // `${day}|${type}` -> { day, type, count, msList }
-    const sessionsPerDay = new Map(); // day -> Set(session_id)
-    const projectClicks  = new Map(); // project_id -> count
+      if (fallback.error) throw fallback.error;
 
-    for (const row of data || []) {
-      const dayStr = dayKey(new Date(row.ts));
-
-      // ✅ normalize type: trim + lowercase (handles stray spaces/case)
-      const t = String(row.event_type || "").trim().toLowerCase();
-
-      // Type bucket
-      const key = `${dayStr}|${t}`;
-      const rec = byDayType.get(key) || { day: dayStr, type: t, count: 0, msList: [] };
-      rec.count += 1;
-
-      if (t === "load_time") {
-        const n = Number(row.load_ms);
-        if (Number.isFinite(n)) rec.msList.push(n);
-      }
-      byDayType.set(key, rec);
-
-      // Sessions: unique session_id per day (fallback: ip+ua hash)
-      if (t === "pageview") {
-        const sid = row.session_id || hashSession(row.ip, row.user_agent);
-        const set = sessionsPerDay.get(dayStr) || new Set();
-        set.add(sid);
-        sessionsPerDay.set(dayStr, set);
-      }
-
-      // Top projects
-      if (t === "project_click" && row.project_id) {
-        projectClicks.set(row.project_id, (projectClicks.get(row.project_id) || 0) + 1);
-      }
+      res.json({
+        rangeDays: clamp(Number(req.query.range || 30), 1, 365),
+        events: (fallback.data || []).map(normalizeEventRow),
+      });
+      return;
     }
 
-    const rows = Array.from(byDayType.values()).sort((a, b) => a.day.localeCompare(b.day));
-
-    const seriesBy = (type) =>
-      rows
-        .filter((r) => r.type === type)
-        .map((r) => ({
-          day: r.day,
-          count: r.count,
-          avgMs: r.msList.length
-            ? Math.round(r.msList.reduce((a, b) => a + b, 0) / r.msList.length)
-            : null,
-        }));
-
-    const pageviews           = seriesBy("pageview");
-    const projectClicksSeries = seriesBy("project_click");
-    const resumeClicksSeries  = seriesBy("resume_click");
-    const loadTimes           = seriesBy("load_time");
-    const errorsSeries        = seriesBy("client_error");
-
-    const sessionsDaily = Array.from(sessionsPerDay.entries())
-      .map(([dayStr, set]) => ({ date: dayStr, count: set.size }))
-      .sort((a, b) => a.date.localeCompare(b.date));
-
-    const sumCounts = (arr) => arr.reduce((a, b) => a + (b.count || 0), 0);
-    const avgLoadMs = (() => {
-      const pts = loadTimes.map((d) => d.avgMs).filter((v) => Number.isFinite(v));
-      return pts.length ? Math.round(pts.reduce((a, b) => a + b, 0) / pts.length) : 0;
-    })();
-
-    const topProjectsRaw = Array.from(projectClicks.entries())
-      .map(([projectId, count]) => ({ projectId: String(projectId), count }))
-      .sort((a, b) => b.count - a.count)
-      .slice(0, 10);
-
-    const titleMap    = await fetchProjectTitles(supa, topProjectsRaw.map(p => p.projectId));
-    const existingIds = new Set([...titleMap.keys()].map(String));
-
-    const topProjects = topProjectsRaw
-      .filter(p => existingIds.has(String(p.projectId))) // ✅ drop deleted projects
-      .map(p => ({
-        projectId: p.projectId,
-        clicks:    p.count,
-        title:     titleMap.get(String(p.projectId)),
-      }));
-
-    // KPI tiles
-    const totals = {
-      resumeClicks:  sumCounts(resumeClicksSeries),
-      pageviews:     sumCounts(pageviews),
-      sessions:      sumCounts(sessionsDaily),
-      avgLoadTimeMs: avgLoadMs,
-      avgLoadMs, // alias for convenience
-      errors:       sumCounts(errorsSeries),
-      projectClicks: sumCounts(projectClicksSeries),
-    };
-
-    // Charts payload (use hydrated titles)
-    const charts = {
-      projectClicks: topProjects.map(p => ({
-        projectId: p.projectId,
-        clicks:    p.clicks,
-        title:     p.title,
-      })),
-      sessionsByDay: sessionsDaily, // [{date,count}]
-    };
-
     res.json({
-      range: { start, end, days },
-      totals,
-      charts,
-      series: {
-        pageviews,
-        projectClicks: projectClicksSeries,
-        resumeClicks:  resumeClicksSeries,
-        loadTimes,
-        errors:        errorsSeries,
-        sessionsDaily,
-      },
-      topProjects, // [{ projectId, title, clicks }]
+      rangeDays: clamp(Number(req.query.range || 30), 1, 365),
+      events: (data || []).map(normalizeEventRow),
     });
   } catch (e) {
     console.error("[analytics] getAnalytics failed", e);
     res.status(500).json({ error: "getAnalytics failed" });
   }
-};
-
-// Compatibility: router may call getAnalyticsSummary
-exports.getAnalyticsSummary = exports.getAnalytics;
-
-/* ───────────────────────── Maintenance ─────────────────────── */
-
-// Zeroed payload helper for immediate UI snap after reset
-function emptyPayload(range = 7, tzOffset = 0) {
-  const today = new Date();
-  const days = [];
-  for (let i = range - 1; i >= 0; i--) {
-    const d = new Date(today);
-    d.setUTCDate(today.getUTCDate() - i);
-    const t = new Date(d.getTime() + tzOffset * 60_000);
-    const y = t.getUTCFullYear();
-    const m = String(t.getUTCMonth() + 1).padStart(2, "0");
-    const day = String(t.getUTCDate()).padStart(2, "0");
-    days.push(`${y}-${m}-${day}`);
-  }
-  return {
-    range,
-    pageviews: 0,
-    resumeClicks: 0,
-    sessions: 0,
-    series: days.map((d) => ({ day: d, pageviews: 0, resume_click: 0 })),
-  };
 }
 
-exports.resetAnalytics = async (_req, res) => {
+export async function publicSummary(req, res) {
   try {
-    const supa = await getAdminClient();
+    const days = clamp(parseInt(req.query.range || "7", 10) || 7, 1, 365);
+    const since = new Date(Date.now() - days * 86400000);
 
-    // Try RPC (preferred if you deployed it)
-    const rpc = await supa.rpc("admin_reset_analytics");
-    if (!rpc.error) {
-      return res.json(emptyPayload(7, 0));
+    const supa = getAdminClient();
+    const table = await getAnalyticsTable(supa);
+
+    let rows = [];
+    let error = null;
+
+    {
+      const result = await supa
+        .from(table)
+        .select("*")
+        .gte("ts", iso(since))
+        .order("ts", { ascending: false });
+
+      if (!result.error) {
+        rows = (result.data || []).map(normalizeEventRow);
+      } else {
+        error = result.error;
+      }
     }
-    console.warn("[analytics] RPC admin_reset_analytics missing or failed:", rpc.error?.message);
 
-    // Fallback: delete all rows from analytics_events
-    // Use a condition that always matches rows without requiring a specific PK
-    const { error: delErr } = await supa
-      .from("analytics_events")
-      .delete()
-      .neq("event_type", "__nonexistent__");
-    if (delErr) throw delErr;
+    if (error) {
+      const fallback = await supa
+        .from(table)
+        .select("*")
+        .gte("created_at", iso(since))
+        .order("created_at", { ascending: false });
 
-    return res.json(emptyPayload(7, 0));
-  } catch (e) {
-    console.error("[analytics reset crash]", e);
-    return res
-      .status(500)
-      .json({ error: "server_crash", detail: e.message || String(e) });
-  }
-};
+      if (fallback.error) throw fallback.error;
 
-/* ───────────────────────── Debug (admin-only route) ────────────────── */
-// Debug: what does the server (this env) see in the last N days?
-exports.debugEventTypes = async (req, res) => {
-  try {
-    const days = Number(req.query.days || 7);
-    const { start, end } = (function rangeFromDays(d = 7) {
-      const end   = new Date();
-      const start = new Date(end);
-      start.setUTCDate(end.getUTCDate() - Number(d) + 1);
-      return { start, end };
-    })(days);
-
-    const supa = await getAdminClient();
-    const { data, error } = await supa
-      .from("analytics_events")
-      .select("event_type, ts")
-      .gte("ts", start.toISOString())
-      .lte("ts", end.toISOString());
-
-    if (error) throw error;
-
-    const counts = {};
-    for (const r of data || []) {
-      const t = String(r.event_type || "").trim().toLowerCase();
-      counts[t] = (counts[t] || 0) + 1;
+      rows = (fallback.data || []).map(normalizeEventRow);
     }
+
+    let pageviews = 0;
+    let resumeClicks = 0;
+    let clientErrors = 0;
+    let sessionEnds = 0;
+    let totalLoadMs = 0;
+    let loadCount = 0;
+
+    let pricingPageViews = 0;
+    let pricingContactClicks = 0;
+    let linkedinClicks = 0;
+    let githubClicks = 0;
+
+    const sessions = new Set();
+    const projectCounts = new Map();
+    const projectImpressions = new Map();
+
+    for (const row of rows) {
+      const type = String(row.event_type || "").trim().toLowerCase();
+      const projectId = row.project_id ? String(row.project_id) : null;
+
+      if (row.session_id) {
+        sessions.add(String(row.session_id));
+      }
+
+      if (type === ANALYTICS_EVENTS.PAGEVIEW) pageviews += 1;
+      if (type === ANALYTICS_EVENTS.RESUME_CLICK) resumeClicks += 1;
+      if (type === ANALYTICS_EVENTS.CLIENT_ERROR) clientErrors += 1;
+      if (type === ANALYTICS_EVENTS.SESSION_END) sessionEnds += 1;
+
+      if (type === ANALYTICS_EVENTS.LOAD_TIME && Number.isFinite(row.load_ms)) {
+        totalLoadMs += Number(row.load_ms);
+        loadCount += 1;
+      }
+
+      if (type === ANALYTICS_EVENTS.PROJECT_IMPRESSION && projectId) {
+        projectImpressions.set(
+          projectId,
+          (projectImpressions.get(projectId) || 0) + 1
+        );
+      }
+
+      if (type === ANALYTICS_EVENTS.PROJECT_CLICK && projectId) {
+        projectCounts.set(projectId, (projectCounts.get(projectId) || 0) + 1);
+      }
+
+      if (type === ANALYTICS_EVENTS.CTA_CLICK) {
+        const metaName = getMetaName(row.meta);
+
+        if (metaName === "pricing_page_view") pricingPageViews += 1;
+        if (metaName === "pricing_contact_click") pricingContactClicks += 1;
+        if (metaName === "linkedin_click") linkedinClicks += 1;
+        if (metaName === "github_click") githubClicks += 1;
+      }
+    }
+
+    const topProjectsRaw = [...projectCounts.entries()]
+      .map(([projectId, count]) => ({ projectId, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 5);
+
+    const allProjectIds = [
+      ...new Set([...projectImpressions.keys(), ...projectCounts.keys()]),
+    ];
+
+    const topConvertingProjectsRaw = allProjectIds
+      .map((projectId) => {
+        const impressions = projectImpressions.get(projectId) || 0;
+        const clicks = projectCounts.get(projectId) || 0;
+        const ctr = impressions > 0 ? clicks / impressions : 0;
+
+        return {
+          projectId,
+          impressions,
+          clicks,
+          ctr,
+        };
+      })
+      .filter((project) => project.impressions >= 1)
+      .sort((a, b) => {
+        if (b.ctr !== a.ctr) return b.ctr - a.ctr;
+        if (b.clicks !== a.clicks) return b.clicks - a.clicks;
+        return b.impressions - a.impressions;
+      })
+      .slice(0, 5);
+
+    const titleMap = await fetchProjectTitles(supa, [
+      ...topProjectsRaw.map((p) => p.projectId),
+      ...topConvertingProjectsRaw.map((p) => p.projectId),
+    ]);
+
+    const topProjects = topProjectsRaw.map((p) => ({
+      projectId: p.projectId,
+      clicks: p.count,
+      title: titleMap.get(String(p.projectId)) || `Project ${p.projectId}`,
+    }));
+
+    const topConvertingProjects = topConvertingProjectsRaw.map((p) => ({
+      projectId: p.projectId,
+      title: titleMap.get(String(p.projectId)) || `Project ${p.projectId}`,
+      impressions: p.impressions,
+      clicks: p.clicks,
+      ctr: Number((p.ctr * 100).toFixed(1)),
+    }));
+
+    const recentEvents = rows.slice(0, 20);
+
     res.json({
-      range: { start: start.toISOString(), end: end.toISOString(), days },
-      counts,
-      hint: "counts are from the SAME DB/env your Admin API uses",
+      rangeDays: days,
+      totals: {
+        pageviews,
+        resumeClicks,
+        sessions: sessions.size,
+        clientErrors,
+        sessionEnds,
+        avgLoadMs: loadCount ? Math.round(totalLoadMs / loadCount) : 0,
+      },
+      ctaMetrics: {
+        pricingPageViews,
+        pricingContactClicks,
+        linkedinClicks,
+        githubClicks,
+      },
+      topProjects,
+      topConvertingProjects,
+      recentEvents,
+      events: recentEvents,
+      daily: [],
     });
   } catch (e) {
-    console.error("[analytics] debugEventTypes failed", e);
-    res.status(500).json({ error: "debugEventTypes failed", detail: String(e?.message || e) });
+    console.error("[analytics] publicSummary failed", e);
+    res.status(500).json({ error: "publicSummary failed" });
   }
-};
+}
+
+export async function resetAnalytics(_req, res) {
+  try {
+    const supa = getAdminClient();
+    const table = await getAnalyticsTable(supa);
+
+    const { error } = await supa
+      .from(table)
+      .delete()
+      .neq("event_type", "__none__");
+
+    if (error) {
+      const fallback = await supa.from(table).delete().neq("type", "__none__");
+      if (fallback.error) throw fallback.error;
+    }
+
+    res.json({ ok: true });
+  } catch (e) {
+    console.error("[analytics] resetAnalytics failed", e);
+    res.status(500).json({ error: "server_crash" });
+  }
+}

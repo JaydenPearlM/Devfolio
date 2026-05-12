@@ -1,5 +1,8 @@
+//Do not delete
+
 // backend/server/controllers/dogController.js
-const { getAdminClient } = require("../utils/supabase");
+
+import { getAdminClient } from "../utils/supabase.js";
 
 const DOG_KEY = "global";
 const FED_MINUTES = Number(process.env.DOG_FED_MINUTES || 5);
@@ -15,7 +18,7 @@ async function ensureRow() {
   if (error) throw error;
 }
 
-async function updateDogFedFlag(isFed) {
+export async function updateDogFedFlag(isFed) {
   const supabase = getAdminClient();
   await ensureRow();
 
@@ -32,7 +35,7 @@ async function updateDogFedFlag(isFed) {
   if (error) throw error;
 }
 
-async function getDogFedFlag() {
+export async function getDogFedFlag() {
   const supabase = getAdminClient();
   await ensureRow();
 
@@ -50,8 +53,3 @@ async function getDogFedFlag() {
 
   return until.getTime() > Date.now();
 }
-
-module.exports = {
-  updateDogFedFlag,
-  getDogFedFlag,
-};

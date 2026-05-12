@@ -1,61 +1,53 @@
-// server/routes/analytics.js
-const express = require("express");
+// Do not delete
+
+import express from "express";
+import {
+  getAnalytics,
+  publicSummary,
+  ping,
+  recordPageview,
+  recordLoadTime,
+  recordProjectImpression,
+  recordProjectClick,
+  recordResumeClick,
+  recordClientError,
+  recordSessionEnd,
+  recordCtaClick,
+  resetAnalytics,
+} from "../controllers/analyticsController.js";
+
 const router = express.Router();
 
-const analyticsCtrl = require("../controllers/analyticsController");
-const { verifyAdmin } = require("../middleware/auth");
+/* ===============================
+   READ ANALYTICS
+=============================== */
 
-/* ─────────────── Diagnostics ─────────────── */
-try {
-  console.log("[analyticsCtrl keys]", Object.keys(analyticsCtrl));
-} catch {
-  /* ignore */
-}
+router.get("/", getAnalytics);
+router.get("/public", publicSummary);
+router.get("/ping", ping);
 
-// Helper: fallback if handler missing
-function ensure(fn, name) {
-  if (typeof fn !== "function") {
-    console.error(`[analytics] Missing handler: ${name} (got ${typeof fn})`);
-    return (_req, res) =>
-      res.status(500).json({ error: `Handler ${name} is undefined` });
-  }
-  return fn;
-}
+/* ===============================
+   TRACKING EVENTS
+=============================== */
 
-/* ─────────────── PUBLIC (no auth) — write-only beacons ─────────────── */
-// Same-origin beacons (NO CORS)
-router.get("/ping", ensure(analyticsCtrl.ping, "ping"));
+router.post("/pageview", recordPageview);
+router.post("/load-time", recordLoadTime);
+router.post("/project-impression", recordProjectImpression);
+router.post("/project-click", recordProjectClick);
+router.post("/resume-click", recordResumeClick);
+router.post("/cta-click", recordCtaClick);
 
-router.post("/pageview", ensure(analyticsCtrl.recordPageview, "recordPageview"));
-router.post("/project-click", ensure(analyticsCtrl.recordProjectClick, "recordProjectClick"));
-router.post("/resume-click", ensure(analyticsCtrl.recordResumeClick, "recordResumeClick")); // ✅ official route
-//router.post("/resumeClicks", ensure(analyticsCtrl.recordResumeClick, "recordResumeClick")); // legacy alias
-router.post("/load-time", ensure(analyticsCtrl.recordLoadTime, "recordLoadTime"));
-router.post("/client-error", ensure(analyticsCtrl.recordClientError, "recordClientError"));
-router.post("/session-end", ensure(analyticsCtrl.recordSessionEnd, "recordSessionEnd"));
+// Legacy alias kept for compatibility
+router.post("/resumeClicks", recordResumeClick);
 
-// Compact public summary for homepage widgets/cards
-router.get("/public", ensure(analyticsCtrl.getPublicSummary, "getPublicSummary"));
-// ...existing imports and routes above...
-router.get("/debug-types", verifyAdmin, analyticsCtrl.debugEventTypes);
+// Error + session tracking
+router.post("/client-error", recordClientError);
+router.post("/session-end", recordSessionEnd);
 
-/* ─────────────── ADMIN (auth) — dashboard & maintenance ─────────────── */
-const getAnalyticsHandler =
-  analyticsCtrl.getAnalytics || analyticsCtrl.getAnalyticsSummary;
+/* ===============================
+   MAINTENANCE
+=============================== */
 
-router.get(
-  "/",
-  verifyAdmin,
-  ensure(
-    getAnalyticsHandler,
-    getAnalyticsHandler === analyticsCtrl.getAnalytics
-      ? "getAnalytics"
-      : "getAnalyticsSummary"
-  )
-);
+router.post("/reset", resetAnalytics);
 
-// Admin-only reset (clears analytics_events table)
-router.post("/reset", verifyAdmin, ensure(analyticsCtrl.resetAnalytics, "resetAnalytics"));
-router.delete("/reset", verifyAdmin, ensure(analyticsCtrl.resetAnalytics, "resetAnalytics")); // alias for safety
-
-module.exports = router;
+export default router;

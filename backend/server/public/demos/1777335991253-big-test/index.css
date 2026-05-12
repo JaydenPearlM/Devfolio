@@ -1,0 +1,209 @@
+/* ---------- fonts ---------- */
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Space+Mono:wght@400;700&display=swap');
+
+/* ---------- palette + font variables ---------- */
+:root{
+  /* green–orange theme */
+  --bg:#0e1412;          /* near-black with green tint */
+  --card:#151d19;        /* deep slate for panels */
+  --ink:#f4fff9;         /* soft white with green cast */
+  --muted:#b7d0c2;       /* desaturated mint-sage */
+
+  --accent:#2fbf71;      /* fresh green */
+  --accent-2:#ff8a3d;    /* vivid orange */
+
+  /* fonts */
+  --font-title: Oswald, system-ui, sans-serif;
+  --font-body: "Space Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  --mono: "Space Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+}
+
+/* ---------- base ---------- */
+*{ box-sizing:border-box }
+html,body{
+  margin:0; padding:0;
+  background:var(--bg); color:var(--ink);
+  font-family:var(--font-body);
+  line-height:1.5;
+}
+.container{ max-width:1200px; margin:24px auto; padding:0 16px }
+
+/* ---------- typography ---------- */
+h1,h2,h3,h4{
+  font-family:var(--font-title);
+  font-weight:700;
+  letter-spacing:0.2px;
+}
+h1{ margin:0 0 6px }
+h2{ color:var(--accent); margin:0 0 10px }
+
+/* ---------- header ---------- */
+.topbar h1{ margin:0 0 6px }
+.sub{ margin:0 0 16px; color:var(--muted) }
+
+/* title row: h1 + buttons inline (left-aligned) */
+.titlebar{
+  display:flex; align-items:center; gap:10px; justify-content:flex-start;
+}
+.titlebar h1{ margin-right:8px }
+.title-actions{ display:flex; gap:8px }
+.btn{
+  background:var(--accent-2);
+  color:#24180f;
+  border:none; border-radius:8px;
+  padding:10px 14px;
+  font-weight:700; font-family:var(--mono);
+  cursor:pointer;
+  transition:background .2s ease, transform .1s ease;
+}
+.btn:hover{ background:#ff9f61; transform:translateY(-1px) }
+.btn:active{ transform:translateY(0) }
+.btn.btn--sm{ padding:6px 10px; border-radius:7px }
+
+/* ---------- layout grid (overlap fix) ---------- */
+.layout{
+  display:grid;
+  grid-template-columns:minmax(320px,380px) 1fr; /* firm left column */
+  gap:24px;
+  align-items:start;
+}
+.controls,.results{
+  position:relative; /* own stacking contexts */
+  min-width:0;       /* keep children from blowing out grid */
+}
+.controls{ z-index:2 }
+.results{ z-index:1 }
+
+@media (max-width:1100px){
+  .layout{ grid-template-columns:1fr } /* stack on narrow screens */
+}
+
+/* ---------- cards & panels ---------- */
+.controls .card,
+.panel{
+  background:var(--card);
+  border:1px solid #1f2a25;
+  border-radius:12px;
+  padding:14px;
+  overflow:visible;   /* allow native UI (select arrow) to show */
+}
+
+/* ---------- form controls ---------- */
+label{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  margin:8px 0 12px;
+}
+input[type="number"], select{
+  display:block;
+  width:100%;
+  background:#0f1714;
+  border:1px solid #26322d;
+  color:var(--ink);
+  border-radius:8px;
+  padding:10px 12px;
+  font-size:14px;
+  font-family:var(--font-body);
+}
+input[type="range"]{ width:100% }
+.val{ font-size:12px; color:var(--muted) }
+
+/* left column spacing */
+.controls{
+  display:flex;
+  flex-direction:column;
+  gap:16px;         /* space between Baseline / Go-Green / Prices */
+  padding-bottom:12px;
+}
+
+/* two-column layout inside Prices card */
+.twocol{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  align-items:start;
+}
+@media (max-width:600px){
+  .twocol{ grid-template-columns:1fr }
+}
+
+/* ---------- results panels ---------- */
+.results{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:16px;
+}
+.stats{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  font-family:var(--mono);
+  font-size:14px;
+  color:var(--muted);
+}
+.stat-line{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  padding:6px 10px;
+  background:rgba(255,255,255,0.04);
+  border-radius:6px;
+}
+.stat-label{ color:var(--accent); font-weight:700 }
+.stat-value{
+  color:var(--ink);
+  font-weight:700;
+  text-align:right;
+  min-width:120px;
+}
+
+/* trend colors for changing values */
+.stat-value.good{ color:var(--accent) }     /* green = improvement */
+.stat-value.bad { color:var(--accent-2) }   /* orange/red = worse */
+
+/* ---------- unified reset buttons ---------- */
+button#reset,
+button#reset-base,
+button#reset-green{
+  background:var(--accent-2);
+  color:#24180f;
+  border:none;
+  border-radius:8px;
+  padding:10px 14px;
+  font-weight:700;
+  font-family:var(--mono);
+  cursor:pointer;
+  transition:background .2s ease, transform .1s ease;
+  margin-top:10px;
+  display:inline-block;
+}
+button#reset:hover,
+button#reset-base:hover,
+button#reset-green:hover{
+  background:#ff9f61;
+  transform:translateY(-1px);
+}
+button#reset:active,
+button#reset-base:active,
+button#reset-green:active{
+  transform:translateY(0);
+}
+
+/* ---------- reusable modal ---------- */
+.modal{ position:fixed; inset:0; z-index:9999; display:none }
+.modal.is-open{ display:block }
+.modal__backdrop{ position:absolute; inset:0; background:rgba(0,0,0,.55); backdrop-filter:saturate(120%) blur(2px) }
+.modal__content{
+  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+  width:min(960px, 92vw); height:min(80vh, 760px);
+  background:var(--card); border:1px solid #1f2a25; border-radius:12px;
+  box-shadow:0 10px 40px rgba(0,0,0,.45);
+  display:flex; flex-direction:column; overflow:hidden;
+}
+.modal__header{ display:flex; align-items:center; justify-content:space-between; padding:10px 14px; border-bottom:1px solid #1f2a25 }
+.modal__header h3{ margin:0; color:var(--accent); font-family:var(--font-title) }
+.modal__close{ background:transparent; border:none; color:var(--ink); font-size:24px; line-height:1; cursor:pointer; padding:6px 10px }
+
+/* shared iframe target */
+#generic-iframe{ width:100%; height:100%; border:0; background:#0f1714 }

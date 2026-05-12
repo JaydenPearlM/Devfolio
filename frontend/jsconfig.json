@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
-    "baseUrl": "src",
+    "baseUrl": "web/src",
     "paths": {
-      "*": ["src/*"]
+      "*": ["web/src/*"]
     }
   },
-  "include": ["src"]
+  "include": ["web/src", "web/src/main.jsx"]
 }
