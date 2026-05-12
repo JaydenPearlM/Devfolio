@@ -1,5 +1,3 @@
 packages:
-  - "frontend/*"
-  - "frontend/*/*"
-  - "backend/*"
-  - "backend/*/*"
+  - "frontend/web"
+  - "backend/server"
