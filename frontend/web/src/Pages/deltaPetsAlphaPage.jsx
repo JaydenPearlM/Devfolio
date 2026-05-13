@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
 import { recordPageview } from "../lib/analytics";
-import "./DeltaPetsAlphaPage.css";
+import "./deltaPetsAlphaPage.css";
 
-export default function DeltaPetsAlphaPage() {
+export default function deltaPetsAlphaPage() {
   useEffect(() => {
     try {
       recordPageview("/deltapets");
@@ -18,217 +18,238 @@ export default function DeltaPetsAlphaPage() {
         <div className="text-center mb-12">
           <h1
             className="
-              text-5xl md:text-7xl font-oswald font-bold mb-4
+              text-5xl md:text-7xl font-oswald font-bold mb-3
               bg-gradient-to-r from-purple-300 via-pink-300 to-cyan-300
               bg-clip-text text-transparent
             "
           >
             DeltaPets
           </h1>
-          <p className="text-xl md:text-2xl font-semibold"
-             style={{ color: 'var(--ink)' }}>
-            Browser-Based Pet Sim | Alpha Development
+
+          <p
+            className="text-xl md:text-2xl font-semibold mb-2"
+            style={{ color: "var(--ink)" }}
+          >
+            Browser Based Pet Sim
+          </p>
+
+          <p
+            className="text-lg md:text-xl font-bold mb-4"
+            style={{ color: "var(--muted)" }}
+          >
+            Alpha Development
           </p>
         </div>
 
         {/* For Players Section */}
-        <section className="dp-neon-panel dp-neon-panel--cyan mb-10">
+        <section className="dp-neon-panel dp-neon-panel--green mb-10 ml-8">
           <h2 className="text-3xl md:text-4xl font-oswald font-bold mb-6 dp-neon-heading">
             For Players
           </h2>
 
           <div className="space-y-5 text-base md:text-lg leading-relaxed dp-panel-text">
             <p>
-              DeltaPets is a browser-based pet simulation game where you raise, train, and battle with unique creatures called <strong className="dp-highlight-cyan">Kith</strong>. 
-              Every Kith is yours to discover, nurture, and grow into a powerful companion.
+              DeltaPets is a browser based pet simulation game where players
+              hatch, raise, train, and bond with unique creatures called{" "}
+              <strong className="dp-highlight-cyan">Kith</strong>. Every Kith
+              grows through care, personality, elemental identity, and player
+              choices.
             </p>
 
             <div>
-              <h3 className="text-xl font-bold mb-3 dp-subheading-pink">Hatch Your Kith</h3>
+              <h3 className="text-xl font-bold mb-3 dp-subheading-pink">
+                Hatch Your Kith
+              </h3>
               <p>
-                Begin your journey by hatching your very own Kith. Each creature emerges with its own personality, elemental affinity, 
-                and unique stats that shape how it grows and battles.
+                Begin your journey by hatching a Kith with its own personality,
+                elemental affinity, strengths, and growth path. No two
+                companions are meant to feel exactly the same.
               </p>
             </div>
 
             <div>
-              <h3 className="text-xl font-bold mb-3 dp-subheading-pink">Daily Care & Progression</h3>
+              <h3 className="text-xl font-bold mb-3 dp-subheading-pink">
+                Daily Care & Progression
+              </h3>
               <p>
-                Care for your Kith daily to keep it happy and healthy. Feed, play, and train to unlock growth traits and watch 
-                your companion evolve. A well-cared-for Kith grows stronger and unlocks new abilities.
+                Feed, clean, train, and care for your Kith to shape how it
+                develops. Consistent care improves growth, unlocks progression
+                opportunities, and prepares your companion for future battles.
               </p>
             </div>
 
             <div>
-              <h3 className="text-xl font-bold mb-3 dp-subheading-pink">Build Your Team</h3>
+              <h3 className="text-xl font-bold mb-3 dp-subheading-pink">
+                Build Your Team
+              </h3>
               <p>
-                Collect and raise multiple Kith to build a balanced team. Discover synergies between different elements, 
-                personalities, and skill sets. Each Kith brings something unique to your roster.
+                Raise multiple Kith and experiment with different elements,
+                personalities, and combat roles. Team composition, care history,
+                and long term progression all matter.
               </p>
             </div>
 
             <div>
-              <h3 className="text-xl font-bold mb-3 dp-subheading-pink">Prepare for Battle</h3>
+              <h3 className="text-xl font-bold mb-3 dp-subheading-pink">
+                Prepare for Battle
+              </h3>
               <p>
-                Train your team and prepare for upcoming battle systems. Strategic team composition and daily care will determine 
-                your success. Master elemental advantages and skill combinations to dominate.
+                Train your Kith for upcoming PvE systems across Aliune,
+                including Instabilities, Flux Events, mini bosses, and
+                exploration encounters. Battles focus on strategy, progression,
+                and skill synergy.
               </p>
             </div>
 
             <div className="mt-8 p-5 rounded-lg dp-inner-glow">
-              <p className="text-center font-semibold" style={{ color: 'var(--ui-trans-ink)' }}>
-                Experience a pet sim built around progression, daily care, and meaningful choices. No downloads. No installation. 
-                Just open your browser and start your journey.
+              <p
+                className="text-center font-semibold"
+                style={{ color: "var(--ui-trans-ink)" }}
+              >
+                Experience a pet sim built around bonding, daily care,
+                exploration, and meaningful growth. No downloads. No
+                installation. Open your browser and enter Aliune.
               </p>
             </div>
           </div>
         </section>
 
-        {/* For Developers / Recruiters Section */}
-        <section className="dp-neon-panel dp-neon-panel--purple mb-10">
-          <h2 className="text-3xl md:text-4xl font-oswald font-bold mb-6 dp-neon-heading">
-            For Developers & Recruiters
-          </h2>
+        <div className="dp-alpha-showcase-grid">
+          {/* For Developers / Recruiters Section */}
+          <section className="dp-neon-panel dp-neon-panel--purple dp-alpha-showcase-card dp-alpha-showcase-card--left">
+            <h2 className="text-3xl md:text-4xl font-oswald font-bold mb-6 dp-neon-heading">
+              For Developers & Recruiters
+            </h2>
 
-          <div className="space-y-5 text-base md:text-lg leading-relaxed dp-panel-text">
-            <p>
-              DeltaPets is a full-stack engineering project showcasing modern web development practices, 
-              scalable architecture, and production-ready systems.
-            </p>
-
-            <div>
-              <h3 className="text-xl font-bold mb-3 dp-subheading-pink">Tech Stack</h3>
-              <ul className="space-y-2 ml-5">
-                <li className="flex items-start">
-                  <span className="dp-bullet mr-2">•</span>
-                  <span><strong>Frontend:</strong> React, TypeScript, modern UI component architecture</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="dp-bullet mr-2">•</span>
-                  <span><strong>Backend:</strong> Node.js, Express API with RESTful endpoints</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="dp-bullet mr-2">•</span>
-                  <span><strong>Database:</strong> Supabase (PostgreSQL) with auth integration</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="dp-bullet mr-2">•</span>
-                  <span><strong>State Management:</strong> Auth-connected gameplay persistence</span>
-                </li>
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="text-xl font-bold mb-3 dp-subheading-pink">Engineering Highlights</h3>
-              <ul className="space-y-2 ml-5">
-                <li className="flex items-start">
-                  <span className="dp-bullet mr-2">•</span>
-                  <span>Pet creation and hatching logic with randomized trait generation</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="dp-bullet mr-2">•</span>
-                  <span>Time-based care decay system with server-side validation</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="dp-bullet mr-2">•</span>
-                  <span>Modular project structure built for scalability and maintainability</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="dp-bullet mr-2">•</span>
-                  <span>Frontend UI systems fully connected to backend game logic</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="dp-bullet mr-2">•</span>
-                  <span>Deployment planning and closed alpha preparation workflow</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="dp-bullet mr-2">•</span>
-                  <span>RESTful API design with authentication and authorization layers</span>
-                </li>
-              </ul>
-            </div>
-
-            <div className="mt-8 p-5 rounded-lg dp-inner-glow">
-              <p className="text-center font-semibold" style={{ color: 'var(--ui-trans-ink)' }}>
-                This project demonstrates full-stack capabilities: frontend development, backend API design, 
-                database architecture, authentication systems, and deployment planning.
+            <div className="space-y-5 text-base md:text-lg leading-relaxed dp-panel-text">
+              <p>
+                DeltaPets is a full stack engineering project built to
+                demonstrate scalable web architecture, modular gameplay systems,
+                live persistence, backend integration, and production focused
+                development practices.
               </p>
-            </div>
-          </div>
-        </section>
 
-        {/* Vague Cool Features Section */}
-        <section className="dp-neon-panel dp-neon-panel--green mb-10">
-          <h2 className="text-3xl md:text-4xl font-oswald font-bold mb-6 dp-neon-heading">
-            Coming Features
-          </h2>
+              <div>
+                <h3 className="text-xl font-bold mb-3 dp-subheading-pink">
+                  Tech Stack
+                </h3>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 dp-panel-text">
-            <div className="dp-feature-card">
-              <h3 className="font-bold text-lg mb-2 dp-subheading-pink">Evolving Kith Forms</h3>
-              <p className="text-sm">
-                Watch your Kith transform as they grow, unlocking new visual forms and enhanced abilities.
-              </p>
-            </div>
+                <ul className="space-y-2 ml-5">
+                  <li className="flex items-start">
+                    <span className="dp-bullet mr-2">•</span>
+                    <span>
+                      <strong>Frontend:</strong> React, TypeScript, Vite, and
+                      modular UI component architecture
+                    </span>
+                  </li>
 
-            <div className="dp-feature-card">
-              <h3 className="font-bold text-lg mb-2 dp-subheading-pink">Elemental Identity</h3>
-              <p className="text-sm">
-                Each Kith possesses a unique elemental affinity that influences battles and interactions.
-              </p>
-            </div>
+                  <li className="flex items-start">
+                    <span className="dp-bullet mr-2">•</span>
+                    <span>
+                      <strong>Backend:</strong> Node.js and Express API
+                      architecture
+                    </span>
+                  </li>
 
-            <div className="dp-feature-card">
-              <h3 className="font-bold text-lg mb-2 dp-subheading-pink">Skill Systems</h3>
-              <p className="text-sm">
-                Unlock and master powerful skills through training and care progression.
-              </p>
-            </div>
+                  <li className="flex items-start">
+                    <span className="dp-bullet mr-2">•</span>
+                    <span>
+                      <strong>Database:</strong> Supabase PostgreSQL with auth
+                      connected persistence
+                    </span>
+                  </li>
 
-            <div className="dp-feature-card">
-              <h3 className="font-bold text-lg mb-2 dp-subheading-pink">Care-Based Progression</h3>
-              <p className="text-sm">
-                Your daily care directly impacts growth, unlocking unique traits and abilities.
-              </p>
-            </div>
+                  <li className="flex items-start">
+                    <span className="dp-bullet mr-2">•</span>
+                    <span>
+                      <strong>Authentication:</strong> Secure player ownership
+                      and gameplay state validation
+                    </span>
+                  </li>
 
-            <div className="dp-feature-card">
-              <h3 className="font-bold text-lg mb-2 dp-subheading-pink">Battle Preparation</h3>
-              <p className="text-sm">
-                Strategic team building and training systems for upcoming competitive battles.
-              </p>
-            </div>
+                  <li className="flex items-start">
+                    <span className="dp-bullet mr-2">•</span>
+                    <span>
+                      <strong>Deployment:</strong> Render planning with closed
+                      alpha testing workflows
+                    </span>
+                  </li>
+                </ul>
+              </div>
 
-            <div className="dp-feature-card">
-              <h3 className="font-bold text-lg mb-2 dp-subheading-pink">Player-Owned Teams</h3>
-              <p className="text-sm">
-                Build and customize your roster of Kith with unique team synergies.
-              </p>
+              <div className="mt-8 p-5 rounded-lg dp-inner-glow">
+                <p
+                  className="text-center font-semibold"
+                  style={{ color: "var(--ui-trans-ink)" }}
+                >
+                  DeltaPets demonstrates scalable architecture planning, AI
+                  assisted testing, and full stack development.
+                </p>
+              </div>
             </div>
+          </section>
 
-            <div className="dp-feature-card">
-              <h3 className="font-bold text-lg mb-2 dp-subheading-pink">Future Alpha Testing</h3>
-              <p className="text-sm">
-                Join closed alpha testing to experience early features and shape development.
-              </p>
-            </div>
+          {/* Coming Features Section */}
+          <section className="dp-neon-panel dp-neon-panel--green dp-alpha-showcase-card">
+            <h2 className="text-3xl md:text-4xl font-oswald font-bold mb-6 dp-neon-heading">
+              Coming Features
+            </h2>
 
-            <div className="dp-feature-card">
-              <h3 className="font-bold text-lg mb-2 dp-subheading-pink">Browser-Native Play</h3>
-              <p className="text-sm">
-                No downloads. No installation. Play anywhere with just a web browser.
-              </p>
+            <div className="space-y-4 dp-panel-text">
+              <div className="dp-feature-card">
+                <h3 className="font-bold text-lg mb-2 dp-subheading-pink">
+                  Evolving Kith Forms
+                </h3>
+                <p className="text-sm">
+                  Watch Kith transform through growth stages, unlocking new
+                  visual forms and stronger abilities.
+                </p>
+              </div>
+
+              <div className="dp-feature-card">
+                <h3 className="font-bold text-lg mb-2 dp-subheading-pink">
+                  Skill Systems
+                </h3>
+                <p className="text-sm">
+                  Unlock and master powerful skills through training, care, and
+                  progression.
+                </p>
+              </div>
+
+              <div className="dp-feature-card">
+                <h3 className="font-bold text-lg mb-2 dp-subheading-pink">
+                  Future Expansions
+                </h3>
+
+                <ul className="space-y-2 text-sm">
+                  <li className="flex items-start">
+                    <span className="dp-bullet mr-2">•</span>
+                    <span>Hatch generation and starter Kith validation</span>
+                  </li>
+
+                  <li className="flex items-start">
+                    <span className="dp-bullet mr-2">•</span>
+                    <span>Authentication state and player ownership</span>
+                  </li>
+
+                  <li className="flex items-start">
+                    <span className="dp-bullet mr-2">•</span>
+                    <span>Frontend, backend, and Supabase persistence</span>
+                  </li>
+                </ul>
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        </div>
 
         {/* Footer CTA */}
-        <div className="text-center py-8">
-          <p className="text-lg mb-4" style={{ color: 'var(--ink)' }}>
-            DeltaPets is currently in active development.
+        <div className="dp-neon-panel dp-neon-panel--purple dp-alpha-footer-banner">
+          <p className="text-lg font-bold" style={{ color: "var(--ink)" }}>
+            Experience a pet sim built around growth, care, and evolution.
           </p>
-          <p className="text-base" style={{ color: 'var(--muted)' }}>
-            A passion project combining game design with full-stack engineering.
+
+          <p className="text-base font-bold" style={{ color: "var(--muted)" }}>
+            No in-app purchases. No ads. Just pure fun.
           </p>
         </div>
       </div>

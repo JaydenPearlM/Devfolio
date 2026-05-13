@@ -55,58 +55,28 @@
 }
 
 /* ---------- Neon Panel Variants (Different Edge Colors) ---------- */
-
-/* Cyan edge glow */
-.dp-neon-panel--cyan {
-  border-color: rgba(34, 211, 238, 0.8);
-  box-shadow: 
-    0 0 0 1px rgba(34, 211, 238, 0.6),
-    0 0 15px rgba(34, 211, 238, 0.4),
-    0 0 30px rgba(34, 211, 238, 0.2),
-    inset 0 0 20px rgba(255, 255, 255, 0.08);
-}
-
-.dp-neon-panel--cyan:hover {
-  box-shadow: 
-    0 0 0 1px rgba(34, 211, 238, 0.9),
-    0 0 20px rgba(34, 211, 238, 0.6),
-    0 0 40px rgba(34, 211, 238, 0.3),
-    inset 0 0 25px rgba(255, 255, 255, 0.1);
-}
-
-/* Purple edge glow */
-.dp-neon-panel--purple {
-  border-color: rgba(168, 85, 247, 0.8);
-  box-shadow: 
-    0 0 0 1px rgba(168, 85, 247, 0.6),
-    0 0 15px rgba(168, 85, 247, 0.4),
-    0 0 30px rgba(168, 85, 247, 0.2),
-    inset 0 0 20px rgba(255, 255, 255, 0.08);
-}
-
-.dp-neon-panel--purple:hover {
-  box-shadow: 
-    0 0 0 1px rgba(168, 85, 247, 0.9),
-    0 0 20px rgba(168, 85, 247, 0.6),
-    0 0 40px rgba(168, 85, 247, 0.3),
-    inset 0 0 25px rgba(255, 255, 255, 0.1);
-}
-
-/* Green edge glow */
+/* Shared cyan edge glow for all DeltaPets panels */
+.dp-neon-panel--cyan,
+.dp-neon-panel--purple,
 .dp-neon-panel--green {
-  border-color: rgba(34, 197, 94, 0.8);
-  box-shadow: 
-    0 0 0 1px rgba(34, 197, 94, 0.6),
-    0 0 15px rgba(34, 197, 94, 0.4),
-    0 0 30px rgba(34, 197, 94, 0.2),
+  border-color: rgba(34, 211, 238, 0.8);
+  box-shadow:
+    0 0 0 2px rgba(34, 211, 238, 0.75),
+    0 0 15px rgba(34, 211, 238, 0.45),
+    0 0 30px rgba(34, 211, 238, 0.25),
+    inset 0 0 0 3px rgba(34, 211, 238, 0.65),
     inset 0 0 20px rgba(255, 255, 255, 0.08);
 }
 
+.dp-neon-panel--cyan:hover,
+.dp-neon-panel--purple:hover,
 .dp-neon-panel--green:hover {
-  box-shadow: 
-    0 0 0 1px rgba(34, 197, 94, 0.9),
-    0 0 20px rgba(34, 197, 94, 0.6),
-    0 0 40px rgba(34, 197, 94, 0.3),
+  border-color: rgba(34, 211, 238, 0.95);
+  box-shadow:
+    0 0 0 2px rgba(34, 211, 238, 0.95),
+    0 0 20px rgba(34, 211, 238, 0.65),
+    0 0 40px rgba(34, 211, 238, 0.35),
+    inset 0 0 0 3px rgba(34, 211, 238, 0.8),
     inset 0 0 25px rgba(255, 255, 255, 0.1);
 }
 
@@ -194,4 +164,93 @@
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: inherit;
   opacity: 0.5;
+}
+/* ---------- Alpha Showcase Two Card Layout ---------- */
+
+.dp-alpha-showcase-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem;
+  align-items: stretch;
+  margin-bottom: 1.5rem;
+}
+
+.dp-alpha-showcase-card {
+  width: 100%;
+  height: 100%;
+  margin-bottom: 0;
+  box-sizing: border-box;
+}
+
+.dp-alpha-footer-banner {
+  margin-bottom: 2.5rem;
+  padding: 1.5rem 2rem;
+  text-align: center;
+}
+
+@media (max-width: 900px) {
+  .dp-alpha-showcase-grid {
+    grid-template-columns: 1fr;
+  }
+}
+/* ---------- Alpha Showcase Two Card Layout ---------- */
+
+.dp-alpha-showcase-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem;
+  align-items: stretch;
+  margin-bottom: 1.5rem;
+}
+
+.dp-alpha-showcase-card {
+  width: 100%;
+  height: 100%;
+  margin-bottom: 0;
+  box-sizing: border-box;
+}
+
+/* Moves only the left card right to match For Players ml-8 */
+.dp-alpha-showcase-card--left {
+  transform: translateX(2rem);
+}
+
+.dp-alpha-footer-banner {
+  margin-bottom: 2.5rem;
+  padding: 1.5rem 2rem;
+  text-align: center;
+}
+
+@media (max-width: 900px) {
+  .dp-alpha-showcase-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dp-alpha-showcase-card--left {
+    transform: none;
+  }
+}
+/* ---------- Kith Text Color Fix ---------- */
+
+.dp-highlight-cyan {
+  color: #000000;
+  text-shadow: none;
+}
+
+/* ---------- Bottom Banner Text Fix ---------- */
+
+.dp-alpha-footer-banner {
+  margin-left: 2rem;
+  margin-bottom: 2.5rem;
+  padding: 1.5rem 2rem;
+  text-align: center;
+  width: calc(100% - 2rem);
+  max-width: none;
+  box-sizing: border-box;
+  transform: none;
+}
+
+.dp-alpha-footer-banner p {
+  color: #000000 !important;
+  text-shadow: none;
 }
