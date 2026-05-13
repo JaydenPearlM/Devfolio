@@ -5,6 +5,7 @@
   "packageManager": "pnpm@9.0.0",
   "scripts": {
     "build": "pnpm --filter devfolio-client build",
-    "start": "pnpm --filter devfolio-backend start"
+    "start": "pnpm --filter devfolio-backend start",
+    "dev": "pnpm -r --parallel dev"
   }
 }

@@ -11,7 +11,7 @@ import Sidebar from "./component/Sidebar";
 import PricingPage from "./component/PricingPage";
 
 import HomePage from "./homepage/HomePage";
-import DeltaPetsAlphaPage from "./Pages/deltaPetsAlphaPage";
+import deltaPetsAlphaPage from "./Pages/deltaPetsAlphaPage";
 import AdminLogin from "./admin/pages/AdminLogin";
 import AdminAnalytics from "./admin/pages/AdminAnalytics";
 import ManageProjects from "./admin/pages/ManageProjects";
@@ -148,7 +148,8 @@ export default function App() {
   }, []);
 
   const headerTitle = useMemo(() => {
-    if (location.pathname === "/deltapets") return "DeltaPets - Alpha Development";
+    if (location.pathname === "/deltapets")
+      return "Coming Soon! Closed Alpha on June 14th 2026!";
     if (location.pathname === "/pricing") return "Pricing";
     if (location.pathname === "/admin") return "Website Analytics";
     if (location.pathname === "/admin/projects") return "Manage Projects";
@@ -160,7 +161,20 @@ export default function App() {
     <div className="app-shell">
       <header className="site-header">
         {headerTitle ? (
-          <div className="site-header__title">{headerTitle}</div>
+          <div
+            className="site-header__title"
+            style={
+              location.pathname === "/deltapets"
+                ? {
+                    width: "100%",
+                    textAlign: "center",
+                    transform: "translateX(120px)",
+                  }
+                : undefined
+            }
+          >
+            {headerTitle}
+          </div>
         ) : null}
       </header>
 
@@ -175,7 +189,7 @@ export default function App() {
           <div className="content-wrapper">
             <Routes>
               <Route path="/" element={<HomePage />} />
-              <Route path="/deltapets" element={<DeltaPetsAlphaPage />} />
+              <Route path="/deltapets" element={<deltaPetsAlphaPage />} />
               <Route path="/pricing" element={<PricingPage />} />
               <Route path="/admin/login" element={<AdminLogin />} />
 
