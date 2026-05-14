@@ -46,7 +46,7 @@ export default function AdminLogin() {
       <div className="w-full max-w-md rounded-2xl border border-white/10 bg-black/40 p-6 shadow-xl">
         <h1 className="text-2xl font-bold mb-2 text-white">Admin Login</h1>
         <p className="text-sm text-white/70 mb-6">
-          Use your admin email/password, or the temporary fallback login.
+          Log in with your username/email and password.
         </p>
 
         <form onSubmit={onSubmit} className="space-y-4">
@@ -87,12 +87,6 @@ export default function AdminLogin() {
 
           {status ? <div className="text-sm text-red-400">{status}</div> : null}
         </form>
-
-        <div className="mt-6 rounded-lg border border-yellow-500/20 bg-yellow-500/10 p-3 text-xs text-yellow-200">
-          <div className="font-semibold mb-1">Temporary fallback login</div>
-          <div>Username: jayden</div>
-          <div>Password: DevfolioAdmin123!</div>
-        </div>
       </div>
     </div>
   );
