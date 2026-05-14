@@ -32,7 +32,27 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/public", express.static(path.join(__dirname, "public")));
 
 // Serve the built React app's static assets (JS, CSS, images, etc.)
-app.use(express.static(DIST_DIR));
+app.use(
+  express.static(DIST_DIR, {
+    index: false,
+    setHeaders: (res, filePath) => {
+      if (filePath.endsWith("index.html")) {
+        res.setHeader("Cache-Control", "no-store");
+      } else {
+        res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
+      }
+    },
+  })
+);
+
+app.use(
+  "/assets",
+  express.static(path.join(DIST_DIR, "assets"), {
+    fallthrough: false,
+    immutable: true,
+    maxAge: "1y",
+  })
+);
 
 /* ===============================
    API ROUTES
@@ -52,6 +72,16 @@ app.get("/api/health", (_req, res) => {
 });
 
 /* ===============================
+   ASSET FALLBACK
+   Prevent missing JS/CSS files from returning index.html.
+   This fixes MIME type errors after deploys/cached assets.
+=============================== */
+
+app.get("/assets/*", (_req, res) => {
+  res.status(404).type("text/plain").send("Asset not found");
+});
+
+/* ===============================
    SPA FALLBACK
    Must be last. Any route that did not match an API
    route or a static file gets the React index.html.
@@ -59,6 +89,13 @@ app.get("/api/health", (_req, res) => {
 =============================== */
 
 app.get("*", (_req, res) => {
+  res.setHeader(
+    "Cache-Control",
+    "no-store, no-cache, must-revalidate, proxy-revalidate"
+  );
+  res.setHeader("Pragma", "no-cache");
+  res.setHeader("Expires", "0");
+
   res.sendFile(path.join(DIST_DIR, "index.html"));
 });
 

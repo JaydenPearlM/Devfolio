@@ -11,7 +11,7 @@ import Sidebar from "./component/Sidebar";
 import PricingPage from "./component/PricingPage";
 
 import HomePage from "./homepage/HomePage";
-import deltaPetsAlphaPage from "./Pages/deltaPetsAlphaPage";
+import DeltaPetsAlphaPage from "./Pages/deltaPetsAlphaPage";
 import AdminLogin from "./admin/pages/AdminLogin";
 import AdminAnalytics from "./admin/pages/AdminAnalytics";
 import ManageProjects from "./admin/pages/ManageProjects";
@@ -189,7 +189,7 @@ export default function App() {
           <div className="content-wrapper">
             <Routes>
               <Route path="/" element={<HomePage />} />
-              <Route path="/deltapets" element={<deltaPetsAlphaPage />} />
+              <Route path="/deltapets" element={<DeltaPetsAlphaPage />} />
               <Route path="/pricing" element={<PricingPage />} />
               <Route path="/admin/login" element={<AdminLogin />} />
 

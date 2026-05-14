@@ -379,18 +379,33 @@ export async function recordClientError(req, res) {
 
 export async function recordSessionEnd(req, res) {
   try {
+    const rawDuration =
+      req.body?.duration_ms ??
+      req.body?.durationMs ??
+      req.body?.duration;
+
+    const parsedDuration = Number(rawDuration);
+
     await insertEvent(req, ANALYTICS_EVENTS.SESSION_END, {
       path: req.body?.path,
       meta: {
         reason: req.body?.reason ?? null,
-        duration_ms:
-          req.body?.duration_ms != null ? Number(req.body.duration_ms) : null,
+        duration_ms: Number.isFinite(parsedDuration)
+          ? parsedDuration
+          : null,
       },
     });
 
     res.status(204).end();
   } catch (e) {
-    console.error("[analytics] recordSessionEnd", e);
+    console.error("[analytics] recordSessionEnd", {
+      message: e?.message || String(e),
+      details: e?.details || null,
+      hint: e?.hint || null,
+      code: e?.code || null,
+      body: req.body,
+    });
+
     res.status(500).json({ error: "session_end_failed" });
   }
 }
