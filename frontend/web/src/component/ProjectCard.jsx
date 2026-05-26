@@ -54,6 +54,13 @@ export default function ProjectCard({ project }) {
     project?.githubLink ||
     "";
 
+  const linkedin =
+    project?.linkedin ||
+    project?.linkedin_url ||
+    project?.linkedin_link ||
+    project?.linkedinLink ||
+    "";
+
   const view =
     project?.projectIndexUrl ||
     project?.project_index_url ||
@@ -247,13 +254,19 @@ export default function ProjectCard({ project }) {
 
           <div className="pcDivider" />
 
-          {/* GitHub / View / Code below Read More */}
+          {/* GitHub / LinkedIn / View / Code below Read More */}
           <div className="pcLinks">
             <TopLink
               href={github}
               label="GitHub"
               colorClass="pcTopLink--github"
               onClick={() => handleProjectClick("github", github)}
+            />
+            <TopLink
+              href={linkedin}
+              label="LinkedIn"
+              colorClass="pcTopLink--linkedin"
+              onClick={() => handleProjectClick("linkedin", linkedin)}
             />
             <TopLink
               href={view}
@@ -298,6 +311,12 @@ export default function ProjectCard({ project }) {
                 label="GitHub"
                 colorClass="pcTopLink--github"
                 onClick={() => handleProjectClick("github", github)}
+              />
+              <TopLink
+                href={linkedin}
+                label="LinkedIn"
+                colorClass="pcTopLink--linkedin"
+                onClick={() => handleProjectClick("linkedin", linkedin)}
               />
               <TopLink
                 href={view}

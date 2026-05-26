@@ -1,0 +1,58 @@
+/* Upload Projects - Remove ALL borders */
+.mp-upload-no-border {
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Hide the dp-transSurface inner border on Upload Projects */
+.mp-upload-no-border::before {
+  display: none !important;
+}
+
+/* 10px purple inset border, set back from edge */
+.mp-upload-inset::after {
+  content: "";
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+  border: 10px solid rgba(139, 92, 246, 0.85);
+  border-radius: 20px;
+  pointer-events: none;
+  z-index: 100;
+}
+
+.mp-upload-inset {
+  position: relative;
+}
+
+.mp-upload-inset > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* Text Inputs - 3px purple inset border */
+.mp-upload-inset .add-project-input,
+.mp-upload-inset .add-project-textarea {
+  font-family: 'Space Mono', monospace !important;
+  caret-color: #8b5cf6 !important;
+  position: relative;
+  border: none !important;
+  box-shadow: inset 0 0 0 3px rgba(139, 92, 246, 0.85) !important;
+  border-radius: 8px !important;
+  padding: 0.75rem !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+}
+
+.mp-upload-inset .add-project-input:focus,
+.mp-upload-inset .add-project-textarea:focus {
+  box-shadow: inset 0 0 0 3px rgba(139, 92, 246, 1) !important;
+  outline: none !important;
+}
+
+.mp-upload-inset .add-project-form-title {
+  font-family: 'Space Mono', monospace !important;
+  font-weight: 700 !important;
+  margin-bottom: 2rem !important;
+}

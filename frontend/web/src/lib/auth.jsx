@@ -57,50 +57,23 @@ export async function signInWithPassword(identifier, password) {
   if (!rawIdentifier || !rawPassword) {
     return {
       data: { session: null, user: null },
-      error: new Error("Email/username and password are required."),
+      error: new Error("Email and password are required."),
     };
   }
 
-  // Check if identifier looks like an email (contains @)
-  const isEmail = rawIdentifier.includes("@");
-
-  if (isEmail) {
-    // Login with email directly
-    return supabase.auth.signInWithPassword({
-      email: rawIdentifier,
-      password: rawPassword,
-    });
-  } else {
-    // It's a username - try common email patterns
-    const emailGuesses = [
-      `${rawIdentifier}maxwell6790@outlook.com`,
-      `${rawIdentifier}@outlook.com`,
-      `${rawIdentifier}@gmail.com`,
-    ];
-
-    // Try each email guess
-    for (const emailGuess of emailGuesses) {
-      const result = await supabase.auth.signInWithPassword({
-        email: emailGuess,
-        password: rawPassword,
-      });
-
-      // If login succeeded, check if username matches
-      if (result.data?.user) {
-        const username = result.data.user.user_metadata?.username;
-        if (username && username.toLowerCase() === rawIdentifier.toLowerCase()) {
-          return result;
-        }
-        // Wrong user, sign them out
-        await supabase.auth.signOut();
-      }
-    }
-
+  // Only accept email format
+  if (!rawIdentifier.includes("@")) {
     return {
       data: { session: null, user: null },
-      error: new Error("Invalid username or password"),
+      error: new Error("Please enter a valid email address."),
     };
   }
+
+  // Login with email directly
+  return supabase.auth.signInWithPassword({
+    email: rawIdentifier,
+    password: rawPassword,
+  });
 }
 
 export async function signOut() {

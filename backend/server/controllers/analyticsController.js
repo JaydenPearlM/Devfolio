@@ -267,7 +267,8 @@ export async function recordPageview(req, res) {
     res.status(204).end();
   } catch (e) {
     console.error("[analytics] recordPageview", e);
-    res.status(500).json({ error: "recordPageview failed" });
+    // Return 204 anyway - analytics failures shouldn't break the app
+    res.status(204).end();
   }
 }
 
@@ -283,7 +284,8 @@ export async function recordLoadTime(req, res) {
     res.status(204).end();
   } catch (e) {
     console.error("[analytics] recordLoadTime", e);
-    res.status(500).json({ error: "recordLoadTime failed" });
+    // Return 204 anyway - analytics failures shouldn't break the app
+    res.status(204).end();
   }
 }
 
@@ -307,7 +309,8 @@ export async function recordProjectImpression(req, res) {
     res.status(204).end();
   } catch (e) {
     console.error("[analytics] recordProjectImpression", e);
-    res.status(500).json({ error: "recordProjectImpression failed" });
+    // Return 204 anyway - analytics failures shouldn't break the app
+    res.status(204).end();
   }
 }
 
@@ -333,7 +336,8 @@ export async function recordProjectClick(req, res) {
     res.status(204).end();
   } catch (e) {
     console.error("[analytics] recordProjectClick", e);
-    res.status(500).json({ error: "recordProjectClick failed" });
+    // Return 204 anyway - analytics failures shouldn't break the app
+    res.status(204).end();
   }
 }
 
@@ -354,7 +358,8 @@ export async function recordResumeClick(req, res) {
     res.status(204).end();
   } catch (e) {
     console.error("[analytics] recordResumeClick", e);
-    res.status(500).json({ error: "recordResumeClick failed" });
+    // Return 204 anyway - analytics failures shouldn't break the app
+    res.status(204).end();
   }
 }
 
@@ -373,7 +378,8 @@ export async function recordClientError(req, res) {
     res.status(204).end();
   } catch (e) {
     console.error("[analytics] recordClientError", e);
-    res.status(500).json({ error: "recordClientError failed" });
+    // Return 204 anyway - analytics failures shouldn't break the app
+    res.status(204).end();
   }
 }
 
@@ -406,7 +412,8 @@ export async function recordSessionEnd(req, res) {
       body: req.body,
     });
 
-    res.status(500).json({ error: "session_end_failed" });
+    // Return 204 anyway - analytics failures shouldn't break the app
+    res.status(204).end();
   }
 }
 
@@ -438,7 +445,8 @@ export async function recordCtaClick(req, res) {
       hint: e?.hint || null,
       message: e?.message || String(e),
     });
-    res.status(500).json({ error: "recordCtaClick failed" });
+    // Return 204 anyway - analytics failures shouldn't break the app
+    res.status(204).end();
   }
 }
 

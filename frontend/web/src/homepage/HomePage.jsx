@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "../lib/supabaseClient";
 import { recordPageview, recordLoadTime } from "../lib/analytics";
-import ProjectInfoPopover from "./ProjectInfoPopover";
+
 import { useIsMobile } from "../hooks/useIsMobile";
 import HomeDesktopLayout from "./layout/HomeDesktopLayout";
 import HomeMobileLayout from "./layout/HomeMobileLayout";
@@ -25,7 +25,7 @@ const PROJECT_SELECT_FIELDS = [
 export default function HomePage() {
   const [projects, setProjects] = useState([]);
   const [error, setError] = useState("");
-  const [infoOpen, setInfoOpen] = useState(false);
+
 
   const isMobile = useIsMobile();
 
@@ -96,25 +96,18 @@ export default function HomePage() {
     };
   }, []);
 
-  return (
-    <div className="homePage w-full min-h-screen">
-      <div className="w-full px-0 sm:px-4 md:px-4 mt-4 md:mt-6">
-        {isMobile ? (
-          <HomeMobileLayout
-            projects={projects}
-            error={error}
-            setInfoOpen={setInfoOpen}
-          />
-        ) : (
-          <HomeDesktopLayout
-            projects={projects}
-            error={error}
-            setInfoOpen={setInfoOpen}
-          />
-        )}
-      </div>
-
-      <ProjectInfoPopover open={infoOpen} onClose={() => setInfoOpen(false)} />
-    </div>
-  );
+return (
+  <>
+    {isMobile ? (
+      <HomeMobileLayout
+        projects={projects}
+      />
+    ) : (
+      <HomeDesktopLayout
+        projects={projects}
+        error={error}      
+      />
+    )}
+  </>
+);
 }

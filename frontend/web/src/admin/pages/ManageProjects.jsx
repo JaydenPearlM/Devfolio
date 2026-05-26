@@ -2,6 +2,7 @@ import React, { useCallback, useState } from "react";
 import AddProjectForm from "../component/AddProjectForm";
 import ProjectGallery from "../component/ProjectGallery";
 import { createEmptyProjectFormState } from "../utils/projectFormState";
+import "./ManageProjects.css";
 
 export default function ManageProjects() {
   const [formData, setFormData] = useState(createEmptyProjectFormState);
@@ -64,14 +65,8 @@ export default function ManageProjects() {
   return (
     <div className="p-4 md:p-5">
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 items-start">
-        <section
-          className="
-            rounded-[30px]
-            bg-[linear-gradient(180deg,rgba(226,213,243,0.88)_0%,rgba(197,217,255,0.80)_100%)]
-            shadow-[0_14px_34px_rgba(15,23,42,0.18)]
-            p-4 sm:p-5
-          "
-        >
+        {/* Upload Projects Panel - No outer border, 4px inset */}
+        <section className="dp-transSurface rounded-[30px] p-6 sm:p-7 mp-upload-no-border mp-upload-inset">
           <AddProjectForm
             formData={formData}
             setFormData={setFormData}
@@ -82,15 +77,8 @@ export default function ManageProjects() {
           />
         </section>
 
-        <section
-          className="
-            rounded-[30px]
-            bg-[linear-gradient(180deg,rgba(226,213,243,0.88)_0%,rgba(197,217,255,0.80)_100%)]
-            shadow-[0_14px_34px_rgba(15,23,42,0.18)]
-            p-4 sm:p-5
-            min-h-[720px]
-          "
-        >
+        {/* Project Gallery Panel - Keep original border */}
+        <section className="dp-transSurface rounded-[30px] p-6 sm:p-7 min-h-[720px]">
           <ProjectGallery onEdit={onEditRow} refreshKey={refreshKey} />
         </section>
       </div>
