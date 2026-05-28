@@ -5,7 +5,7 @@
 // Expects Authorization: Bearer <supabase_access_token>
 //
 // Configure allowed admins via env (server-side):
-// ADMIN_EMAILS=you@example.com,other@example.com
+// _EMAILS=you@example.com,other@example.com
 //
 // This replaces the old custom JWT ("sub":"admin") flow.
 
