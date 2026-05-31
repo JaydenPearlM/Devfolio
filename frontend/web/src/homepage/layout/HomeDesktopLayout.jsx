@@ -16,6 +16,13 @@ export default function HomeDesktopLayout({
         rounded-lg shadow-lg
       "
     >
+      {/* Top Construction Banner */}
+      <div className="md:col-span-3 w-full bg-black/80 border-b border-cyan-300/40 px-4 py-3 text-center rounded-lg">
+        <p className="text-lg md:text-xl font-black tracking-wide text-cyan-200 drop-shadow-[0_0_12px_rgba(34,211,238,0.9)]">
+          Sorry For the Current Mess! We are still in construction! Hopefully we shall be up and running soon!
+        </p>
+      </div>
+
       {/* Left Column */}
       <aside className="w-full md:col-[1/2] md:pl-1 md:-ml-2 flex flex-col gap-6">
         <DeltaPetsCard />
@@ -33,27 +40,8 @@ export default function HomeDesktopLayout({
         "
       />
 
-      {/* Right Column */}
-      <section className="w-full md:col-[3/4] relative">
-        {/* Title + How To Use button row */}
-        <div className="flex items-center gap-3 mb-4">
-          <h2 className="text-3xl font-oswald font-bold text-white">
-            Project Gallery
-          </h2>
-
-          <button
-            className="
-              hidden md:inline-flex items-center gap-2 rounded-md 
-              border px-3 py-1.5 text-sm font-semibold
-              bg-purple-500 hover:bg-purple-600 text-white border-purple-600
-              shadow-sm hover:shadow-md transition-all
-            "
-            onClick={() => setInfoOpen(true)}
-          >
-            How to Use The Cards
-          </button>
-        </div>
-
+      {/* Project Cards */}
+      <section className="w-full md:col-[3/4]">
         {error && <p className="text-red-600 text-sm mb-3">{error}</p>}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
