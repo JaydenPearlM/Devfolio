@@ -12,7 +12,7 @@ export default function HomeDesktopLayout({
     <div
       className="
         flex flex-col gap-6 items-start
-        md:grid md:grid-cols-[1fr_8px_1.2fr] md:gap-x-6
+        md:grid md:grid-cols-[minmax(320px,0.95fr)_8px_minmax(0,1.50fr)] md:gap-x-10 md:gap-y-8
         rounded-lg shadow-lg
       "
     >
@@ -24,7 +24,7 @@ export default function HomeDesktopLayout({
       </div>
 
       {/* Left Column */}
-      <aside className="w-full md:col-[1/2] md:pl-1 md:-ml-2 flex flex-col gap-6">
+    <aside className="w-full md:col-[1/2] md:pl-12 md:pr-4 mb-[30px] flex flex-col gap-8">
         <DeltaPetsCard />
         <AboutJayden className="md:min-h-fit" />
       </aside>

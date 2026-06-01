@@ -73,7 +73,9 @@ export default function DeltaPetsCard() {
             className="
               text-lg md:text-xl
               font-black uppercase tracking-[0.18em]
-              text-[#1e293b]
+              text-[#ffcf61]
+              [-webkit-text-stroke:1px_#8b0000]
+              drop-shadow-[0_0_8px_rgba(255,207,97,0.45)]
             "
           >
             Featured Game Project
@@ -87,30 +89,31 @@ export default function DeltaPetsCard() {
             tracking-[-0.04em]
             leading-[0.95]
             mb-4
+            text-[#ffcf61]
+            [-webkit-text-stroke:1px_#8b0000]
+            drop-shadow-[0_0_8px_rgba(255,207,97,0.45)]
           "
           style={{
-            color: "#000000",
             fontFamily: '"Space Mono", system-ui, monospace',
           }}
         >
           DeltaPets: Raise. Train. Evolve. Bond.
         </h2>
 
-<p className="text-[#1e293b]/85 text-base md:text-lg leading-relaxed mb-5">
-  DeltaPets is a full-stack browser game demonstrating scalable
-  architecture for real-time gameplay systems. Built with React,
-  TypeScript, Express, and Supabase, the project implements
-  server-authoritative game logic, persistent state management, and
-  modular progression systems for long-term player development.
-</p>
+        <p className="text-[#1e293b]/85 text-base md:text-lg leading-relaxed mb-5">
+          DeltaPets is a full-stack browser game demonstrating scalable
+          architecture for real-time gameplay systems. Built with React,
+          TypeScript, Express, and Supabase, the project implements
+          server-authoritative game logic, persistent state management, and
+          modular progression systems for long-term player development.
+        </p>
 
-<p className="text-[#1e293b]/85 text-base md:text-lg leading-relaxed mb-5">
-  Every Kith is procedurally unique. Core systems include IV-like stat
-  variance, personality-driven growth patterns, elemental affinity
-  calculations, timestamp-based care decay with server-side validation,
-  and dynamic progression shaping how each Kith develops over time.
-</p>
-
+        <p className="text-[#1e293b]/85 text-base md:text-lg leading-relaxed mb-5">
+          Every Kith is procedurally unique. Core systems include IV-like stat
+          variance, personality-driven growth patterns, elemental affinity
+          calculations, timestamp-based care decay with server-side validation,
+          and dynamic progression shaping how each Kith develops over time.
+        </p>
 
         <p className="text-[#1e293b]/85 text-base md:text-lg leading-relaxed mb-6">
           Closed Alpha testing begins on{" "}
@@ -120,35 +123,50 @@ export default function DeltaPetsCard() {
         </p>
 
         <div className="grid gap-3 sm:grid-cols-3 mb-6">
-          <div className="rounded-xl bg-white/45 border border-white/45 p-3">
-            <p className="text-xs uppercase tracking-widest font-bold text-[#1e293b]/60">
-              Features
-            </p>
-            <p className="mt-1 font-semibold text-[#1e293b]">
-              Procedurally generated Kith, timestamp-based care decay,
-dynamic stat allocation, personality-driven progression,
-and scalable gameplay systems.
-            </p>
+          <div className="relative rounded-xl bg-white/45 border border-white/45 p-5">
+            <div className="pointer-events-none absolute inset-[5px] rounded-lg border border-cyan-300/80 shadow-[inset_0_0_14px_rgba(34,211,238,0.45)]" />
+
+            <div className="relative z-10">
+              <p className="text-xs uppercase tracking-widest font-bold text-[#1e293b]/60">
+                Features
+              </p>
+
+              <p className="mt-1 font-semibold text-[#334155]/90">
+                Procedurally generated Kith, timestamp-based care decay,
+                dynamic stat allocation, personality-driven progression, and
+                scalable gameplay systems.
+              </p>
+            </div>
           </div>
 
-          <div className="rounded-xl bg-white/45 border border-white/45 p-3">
-            <p className="text-xs uppercase tracking-widest font-bold text-[#1e293b]/60">
-              It's gonna be wild!
-            </p>
-            <p className="mt-1 font-semibold text-[#1e293b]">
-              Raise a "living" companion that grows through trust, daily care,
-              progression, evolution and future battle ready systems.
-            </p>
+          <div className="relative rounded-xl bg-white/45 border border-white/45 p-5">
+            <div className="pointer-events-none absolute inset-[5px] rounded-lg border border-cyan-300/80 shadow-[inset_0_0_14px_rgba(34,211,238,0.45)]" />
+
+            <div className="relative z-10">
+              <p className="text-xs uppercase tracking-widest font-bold text-[#1e293b]/60">
+                It's gonna be wild!
+              </p>
+
+              <p className="mt-1 font-semibold text-[#334155]/90">
+                Raise a "living" companion that grows through trust, daily
+                care, progression, evolution and future battle ready systems.
+              </p>
+            </div>
           </div>
 
-          <div className="rounded-xl bg-white/45 border border-white/45 p-3">
-            <p className="text-xs uppercase tracking-widest font-bold text-[#1e293b]/60">
-              Tech Stack
-            </p>
-            <p className="mt-1 font-semibold text-[#1e293b]">
-              Vite, React, TypeScript, Node.js, Express, Supabase/PostgreSQL, REST
-              APIs, pnpm Monorepo.
-            </p>
+          <div className="relative rounded-xl bg-white/45 border border-white/45 p-5">
+            <div className="pointer-events-none absolute inset-[5px] rounded-lg border border-cyan-300/80 shadow-[inset_0_0_14px_rgba(34,211,238,0.45)]" />
+
+            <div className="relative z-10">
+              <p className="text-xs uppercase tracking-widest font-bold text-[#1e293b]/60">
+                Tech Stack
+              </p>
+
+              <p className="mt-1 font-semibold text-[#334155]/90">
+                Vite, React, TypeScript, Node.js, Express,
+                Supabase/PostgreSQL, REST APIs, pnpm Monorepo.
+              </p>
+            </div>
           </div>
         </div>
 
