@@ -12,19 +12,12 @@ export default function HomeDesktopLayout({
     <div
       className="
         flex flex-col gap-6 items-start
-        md:grid md:grid-cols-[minmax(320px,0.95fr)_8px_minmax(0,1.50fr)] md:gap-x-10 md:gap-y-8
+        md:grid md:grid-cols-[minmax(320px,0.95fr)_8px_minmax(0,1.50fr)] md:gap-x-6
         rounded-lg shadow-lg
       "
     >
-      {/* Top Construction Banner */}
-      <div className="md:col-span-3 w-full bg-black/80 border-b border-cyan-300/40 px-4 py-3 text-center rounded-lg">
-        <p className="text-lg md:text-xl font-black tracking-wide text-cyan-200 drop-shadow-[0_0_12px_rgba(34,211,238,0.9)]">
-          Sorry For the Current Mess! We are still in construction! Hopefully we shall be up and running soon!
-        </p>
-      </div>
-
       {/* Left Column */}
-    <aside className="w-full md:col-[1/2] md:pl-12 md:pr-4 mb-[30px] flex flex-col gap-8">
+      <aside className="w-full md:col-[1/2] md:pl-12 md:pr-2 md:pt-[40px] mb-[30px] flex flex-col gap-8">
         <DeltaPetsCard />
         <AboutJayden className="md:min-h-fit" />
       </aside>
@@ -41,7 +34,7 @@ export default function HomeDesktopLayout({
       />
 
       {/* Project Cards */}
-      <section className="w-full md:col-[3/4]">
+     <section className="w-full md:col-[3/4] md:-ml-10 md:pt-[40px]">
         {error && <p className="text-red-600 text-sm mb-3">{error}</p>}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

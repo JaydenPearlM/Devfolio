@@ -154,7 +154,7 @@ export default function App() {
     if (location.pathname === "/admin") return "Website Analytics";
     if (location.pathname === "/admin/projects") return "Manage Projects";
     if (location.pathname === "/admin/login") return "Admin Login";
-    return "";
+    return "Jayden’s Devfolio: Software Engineering, Design, and Creative Systems";
   }, [location.pathname]);
 
   return (

@@ -101,25 +101,27 @@ export default function DeltaPetsCard() {
         </h2>
 
         <p className="text-[#1e293b]/85 text-base md:text-lg leading-relaxed mb-5">
-          DeltaPets is a full-stack browser game demonstrating scalable
-          architecture for real-time gameplay systems. Built with React,
-          TypeScript, Express, and Supabase, the project implements
-          server-authoritative game logic, persistent state management, and
-          modular progression systems for long-term player development.
+          DeltaPets is a full stack browser game built around scalable gameplay
+          systems, long term progression, and interactive companion mechanics.
+          Built with React, TypeScript, Express, and Supabase, the project
+          combines frontend engineering, backend architecture, persistent data
+          systems, and modular game design inside one evolving production
+          environment.
         </p>
 
         <p className="text-[#1e293b]/85 text-base md:text-lg leading-relaxed mb-5">
-          Every Kith is procedurally unique. Core systems include IV-like stat
-          variance, personality-driven growth patterns, elemental affinity
-          calculations, timestamp-based care decay with server-side validation,
-          and dynamic progression shaping how each Kith develops over time.
+          Every Kith is procedurally unique. Core systems include stat variance,
+          personality driven growth patterns, elemental affinity calculations,
+          timestamp based care systems with server side validation, and
+          progression paths that shape how each Kith develops over time.
         </p>
 
         <p className="text-[#1e293b]/85 text-base md:text-lg leading-relaxed mb-6">
           Closed Alpha testing begins on{" "}
-          <span className="font-bold">June 14</span>. The first playable build
-          focuses on sign up, Mystery Egg hatching, Kith profiles, care systems,
-          bonding, and the foundation for future combat and evolution updates.
+          <span className="font-bold">June 14; current Alpha is a closed Alpha for ten people to gtest the game.</span>. The first playable build
+          focuses on account creation, Mystery Egg hatching, Kith profiles,
+          bonding systems, care mechanics, and the foundation for future combat
+          and evolution updates.
         </p>
 
         <div className="grid gap-3 sm:grid-cols-3 mb-6">
@@ -132,9 +134,9 @@ export default function DeltaPetsCard() {
               </p>
 
               <p className="mt-1 font-semibold text-[#334155]/90">
-                Procedurally generated Kith, timestamp-based care decay,
-                dynamic stat allocation, personality-driven progression, and
-                scalable gameplay systems.
+                Procedurally generated Kith, dynamic stat systems, personality
+                driven progression, timestamp based care mechanics, and scalable
+                gameplay architecture designed for long term expansion.
               </p>
             </div>
           </div>
@@ -144,12 +146,14 @@ export default function DeltaPetsCard() {
 
             <div className="relative z-10">
               <p className="text-xs uppercase tracking-widest font-bold text-[#1e293b]/60">
-                It's gonna be wild!
+                It is gonna be wild!
               </p>
 
               <p className="mt-1 font-semibold text-[#334155]/90">
-                Raise a "living" companion that grows through trust, daily
-                care, progression, evolution and future battle ready systems.
+                Raise a living companion that grows through trust, daily care,
+                progression, evolution, and future battle systems. Every Kith
+                develops differently based on how players interact with them
+                over time.
               </p>
             </div>
           </div>
@@ -163,8 +167,8 @@ export default function DeltaPetsCard() {
               </p>
 
               <p className="mt-1 font-semibold text-[#334155]/90">
-                Vite, React, TypeScript, Node.js, Express,
-                Supabase/PostgreSQL, REST APIs, pnpm Monorepo.
+                Vite, React, TypeScript, Node.js, Express, Supabase,
+                PostgreSQL, REST APIs, and pnpm Monorepo.
               </p>
             </div>
           </div>
