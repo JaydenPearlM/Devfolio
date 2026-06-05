@@ -87,6 +87,12 @@
   --dv-subtitle-dark: rgba(0, 0, 0, 0.78);
   --dv-text-dark: rgba(0, 0, 0, 0.86);
   --dv-text-dark-muted: rgba(0, 0, 0, 0.64);
+
+  /* Homepage banner palette */
+  --dv-banner-start: #2b145f;
+  --dv-banner-mid: #6d28d9;
+  --dv-banner-end: #0ea5e9;
+  --dv-banner-text: #fff7ed;
 }
 
 /* ---------- Base reset ---------- */
@@ -164,12 +170,13 @@ h6 {
 
 .site-header__title {
   font-family: "Space Mono", system-ui, monospace;
-  font-size: 28px;
+  font-size: clamp(1.45rem, 3vw, 2.35rem);
   font-weight: 800;
   letter-spacing: 0.03em;
-  line-height: 1;
-  color: #eef4ff;
+  line-height: 1.1;
+  color: var(--dv-banner-text);
   text-align: center;
+  text-wrap: balance;
 }
 
 /* Avoid Tailwind `.container` collision */
@@ -202,9 +209,6 @@ iframe {
 
 /* =============================================================================
    REUSABLE DEVFOLIO UI HELPERS
-   -----------------------------------------------------------------------------
-   These are safe global helpers for panels/text/glows.
-   They do not replace existing project card styling.
 ============================================================================= */
 
 .dv-panel-dark {
@@ -305,8 +309,13 @@ iframe {
 }
 
 .dp-sidebarShell {
-  background: var(--dv-panel-trans-bg);
-  border: 4px solid rgba(147, 197, 253, 0.9);
+  background: linear-gradient(
+    135deg,
+    rgba(222, 207, 255, 0.9),
+    rgba(147, 197, 253, 0.82),
+    rgba(251, 207, 232, 0.78)
+  );
+  border: 4px solid rgba(147, 197, 253, 0.82);
 }
 
 /* =============================================================================
@@ -320,18 +329,21 @@ iframe {
 }
 
 .site-header {
-  height: 64px;
+  min-height: 92px;
+  padding: 18px 24px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: linear-gradient(
     90deg,
-    var(--blue-900) 0%,
-    var(--blue-700) 55%,
-    var(--blue-500) 100%
+    var(--dv-banner-start) 0%,
+    var(--dv-banner-mid) 52%,
+    var(--dv-banner-end) 100%
   );
-  border-bottom: 1px solid rgba(255, 255, 255, 0.18);
-  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.26);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow:
+    0 12px 30px rgba(0, 0, 0, 0.32),
+    0 0 28px rgba(139, 92, 246, 0.28);
 }
 
 .app-body {
@@ -387,7 +399,6 @@ iframe {
    PROJECT CARD
 ================================ */
 
-/* Wrapper -- perspective for 3D flip */
 .pcWrap {
   perspective: 1200px;
   min-height: 500px;
@@ -405,7 +416,6 @@ iframe {
   transform: rotateY(180deg);
 }
 
-/* Shared face styles */
 .pcFace {
   position: absolute;
   inset: 0;
@@ -418,8 +428,6 @@ iframe {
   overflow: hidden;
   background: var(--dv-panel-trans-bg);
   color: var(--ui-text-primary);
-
-  /* Outer neon glow border matching accent purple + blue palette */
   border: 2px solid rgba(139, 92, 246, 0.9);
   box-shadow:
     0 0 0 1px rgba(74, 134, 200, 0.6),
@@ -432,7 +440,6 @@ iframe {
   transform: rotateY(180deg);
 }
 
-/* pcRing divs kept in JSX but hidden -- border handled by box-shadow above */
 .pcRing,
 .pcRing--1,
 .pcRing--2,
@@ -440,7 +447,6 @@ iframe {
   display: none;
 }
 
-/* Divider */
 .pcDivider {
   height: 1px;
   background: rgba(255, 255, 255, 0.38);
@@ -448,7 +454,6 @@ iframe {
   flex-shrink: 0;
 }
 
-/* GitHub / View / Code row */
 .pcLinks {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -491,7 +496,6 @@ iframe {
   font-weight: 700;
 }
 
-/* Title */
 .pcTitle {
   margin: 0;
   font-size: clamp(2rem, 3.5vw, 2.6rem);
@@ -511,7 +515,6 @@ iframe {
   text-align: center;
 }
 
-/* Body row -- thumbnail left, meta right */
 .pcBodyRow {
   display: flex;
   gap: 14px;
@@ -526,14 +529,15 @@ iframe {
   align-self: stretch;
 }
 
-/* 350x350 thumbnail */
 .pcThumb {
   width: 100%;
   height: 100%;
   border-radius: 12px;
   object-fit: cover;
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow:
+    0 0 12px rgba(0, 0, 0, 0.35),
+    0 4px 12px rgba(0, 0, 0, 0.18);
   display: block;
 }
 
@@ -554,7 +558,6 @@ iframe {
   align-content: start;
 }
 
-/* Skills / Software meta */
 .pcMeta {
   display: flex;
   flex-direction: column;
@@ -576,7 +579,6 @@ iframe {
   line-height: 1.5;
 }
 
-/* Read More / Go Back button row */
 .pcReadMoreRow {
   display: flex;
   justify-content: center;
@@ -618,7 +620,6 @@ iframe {
   transform: translateY(-1px);
 }
 
-/* Back face layout */
 .pcBackInner {
   display: flex;
   flex-direction: column;
@@ -651,7 +652,6 @@ iframe {
   white-space: pre-wrap;
 }
 
-/* Responsive */
 @media (max-width: 900px) {
   .pcWrap,
   .pcCard {
@@ -669,8 +669,6 @@ iframe {
 
 /* ===============================
    DELTAPETS LINK PANEL
-   Column 1 promo above About panel.
-   Does NOT change trans colors.
 ================================ */
 
 .deltaPetsLinkPanel {
@@ -736,4 +734,25 @@ iframe {
   transform: translateY(-1px);
   opacity: 0.92;
   box-shadow: 0 0 24px rgba(var(--accent-rgb), 0.46);
+}
+
+/* =============================================================================
+   HOMEPAGE MOBILE READABILITY
+============================================================================= */
+
+@media (max-width: 768px) {
+  .app-main {
+    background: linear-gradient(
+      180deg,
+      var(--blue-800) 0%,
+      var(--blue-900) 72%,
+      var(--bg-page) 100%
+    );
+    padding-bottom: 56px;
+  }
+
+  .site-header {
+    min-height: 104px;
+    padding-inline: 16px;
+  }
 }
