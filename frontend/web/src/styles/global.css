@@ -105,7 +105,7 @@
 html,
 body,
 #root {
-  height: 100%;
+  min-height: 100%;
   width: 100%;
   margin: 0;
   padding: 0;
@@ -114,37 +114,17 @@ body,
 body {
   overflow-x: hidden;
   color: inherit;
-  font-family:
-    "Inter",
-    system-ui,
-    -apple-system,
-    Segoe UI,
-    Roboto,
-    Helvetica,
-    Arial,
-    "Apple Color Emoji",
-    "Segoe UI Emoji",
-    "Segoe UI Symbol",
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 
   background:
-    radial-gradient(
-      circle at 18% 12%,
-      rgba(var(--accent-rgb), 0.16) 0%,
-      rgba(var(--accent-rgb), 0.07) 28%,
-      transparent 58%
-    ),
-    radial-gradient(
-      circle at 82% 18%,
-      rgba(116, 201, 234, 0.16) 0%,
-      rgba(116, 201, 234, 0.06) 32%,
-      transparent 62%
-    ),
-    linear-gradient(180deg, var(--bg-page-2) 0%, var(--bg-page) 100%);
+    linear-gradient(
+      180deg,
+      #08153f 0%,
+      #0d1d57 50%,
+      #1f2f73 100%
+    );
 
   background-repeat: no-repeat;
+  background-size: cover;
   background-attachment: fixed;
 }
 

@@ -72,9 +72,7 @@ export default function DeltaPetsCard() {
           <span
             className="
               text-lg md:text-xl
-              font-black uppercase tracking-[0.18em]
-              text-[#ffcf61]
-              [-webkit-text-stroke:1px_#8b0000]
+              font-black uppercase tracking-[0.18em             
               drop-shadow-[0_0_8px_rgba(255,207,97,0.45)]
             "
           >
